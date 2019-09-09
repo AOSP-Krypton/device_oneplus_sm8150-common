@@ -33,7 +33,7 @@ cc_library {
     ],
     owner: "qti",
     header_libs: [
-        "qti_kernel_headers",
+        "generated_kernel_headers",
     ],
     export_include_dirs: ["."],
 }
