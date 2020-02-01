@@ -16,11 +16,19 @@
 
 package com.krypton.settings.device;
 
+import android.content.res.Resources;
+import android.os.FileUtils;
+import android.util.Log;
+
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
+import java.io.IOException;
+
 public class Utils {
+
+    private static final String TAG = "DeviceSettings";
 
     public static boolean isChecked(Preference preference) {
         boolean checked = false;
@@ -30,6 +38,34 @@ public class Utils {
             checked = ((CheckBoxPreference) preference).isChecked();
         }
         return checked;
+    }
+
+    public static String getLocalizedString(final Resources res,
+                                           final String stringName,
+                                           final String stringFormat) {
+       final String name = stringName.toLowerCase().replace(" ", "_");
+       final String nameRes = String.format(stringFormat, name);
+       return getStringForResourceName(res, nameRes, stringName);
+    }
+
+    public static String getStringForResourceName(final Resources res,
+                                                 final String resourceName,
+                                                 final String defaultValue) {
+       final int resId = res.getIdentifier(resourceName, "string", "com.krypton.settings.device");
+       if (resId <= 0) {
+           Log.e(TAG, "No resource found for " + resourceName);
+           return defaultValue;
+       } else {
+           return res.getString(resId);
+       }
+    }
+
+    public static void write(String file, String value) {
+        try {
+            FileUtils.stringToFile(file, "1");
+        } catch(IOException e) {
+            Log.d(TAG, "caught exception", e);
+        }
     }
 
 }

@@ -24,4 +24,18 @@
             android:summaryOn="@string/force_90_summary"
             android:summaryOff="@string/force_60_summary" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="graphics"
+        android:title="@string/display_title">
+
+        <Preference
+            android:key="touchscreen_gesture_category"
+            android:title="@string/touchscreen_gesture_settings_title"
+            android:summary="@string/touchscreen_gesture_settings_summary"
+            android:persistent="false">
+            <intent android:targetPackage="com.krypton.settings.device"
+                    android:targetClass="com.krypton.settings.device.TouchscreenGestureSettingsActivity" />
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -17,9 +17,18 @@
     package="com.krypton.settings.device"
     android:sharedUserId="android.uid.system">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <protected-broadcast android:name="KeyEvent.SLIDER_KEY_CHANGED" />
+    <protected-broadcast android:name="com.krypton.settings.device.UPDATE_SETTINGS" />
+
+    <uses-sdk
+        android:minSdkVersion="30"
+        android:targetSdkVersion="30" />
 
     <application
         android:title="@string/device_settings_title"
@@ -34,5 +43,9 @@
                 <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".TouchscreenGestureSettingsActivity"
+            android:label="@string/touchscreen_gesture_settings_title" />
     </application>
 </manifest>
