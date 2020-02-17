@@ -73,6 +73,7 @@ import java.util.List;
 public class KeyHandler implements DeviceKeyHandler {
 
     private static final String TAG = "KeyHandler";
+    private static final String PULSE_ACTION = "com.android.systemui.doze.pulse";
     private static final String GESTURE_WAKEUP_REASON = "touchscreen-gesture-wakeup";
     private static final int GESTURE_REQUEST = 1;
 
@@ -213,6 +214,14 @@ public class KeyHandler implements DeviceKeyHandler {
          mPowerManager.wakeUp(SystemClock.uptimeMillis(), WAKE_REASON_GESTURE, GESTURE_WAKEUP_REASON);
     }
 
+    private void launchDozePulse() {
+        final boolean dozeEnabled = Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.DOZE_ENABLED, 1) != 0;
+        if (dozeEnabled) {
+            mContext.sendBroadcastAsUser(new Intent(PULSE_ACTION), CURRENT);
+        }
+    }
+
     private void dispatchMediaKeyToMediaSession(int keycode) {
         MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
         if (helper == null) {
@@ -317,6 +326,8 @@ public class KeyHandler implements DeviceKeyHandler {
                     break;
                 case Constants.ACTION_WAKEUP:
                     wakeUp();
+                case Constants.ACTION_AMBIENT_DISPLAY:
+                    launchDozePulse();
             }
             doHapticFeedback();
         }
