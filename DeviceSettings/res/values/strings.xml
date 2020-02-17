@@ -57,5 +57,6 @@
     <string name="touchscreen_gesture_action_volume_down">Lower media volume</string>
     <string name="touchscreen_gesture_action_volume_up">Raise media volume</string>
     <string name="touchscreen_gesture_action_wakeup">Wake up the device</string>
+    <string name="touchscreen_gesture_action_ambient_display">Show ambient display</string>
 
 </resources>
