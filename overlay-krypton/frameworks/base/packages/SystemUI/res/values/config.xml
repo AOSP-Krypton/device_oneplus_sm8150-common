@@ -26,4 +26,7 @@
 
     <!-- Udfps vendor code -->
     <integer name="config_udfps_vendor_code">0</integer>
+
+    <!-- FPSInfoService FPS node file path -->
+    <string name="config_fpsInfoSysNode" translatable="false">/sys/class/drm/sde-crtc-0/measured_fps</string>
 </resources>
