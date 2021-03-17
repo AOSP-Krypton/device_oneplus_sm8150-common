@@ -15,4 +15,9 @@
     <!-- Raise to wake strings-->
     <string name="raise_to_wake_gesture_title">Raise to wake</string>
     <string name="raise_to_wake_gesture_summary">Wake up the device instead of pulsing notification</string>
+
+    <!-- Custom brightness -->
+    <string name="custom_brightness_category_title">Brightness</string>
+    <string name="custom_aod_brightness_title">Ambient display brightness</string>
+    <string name="custom_aod_brightness_summary">Enable to set a custom brightness for ambient display</string>
 </resources>

@@ -24,20 +24,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.UserHandle;
 import android.provider.Settings;
-import android.util.Log;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
-
 import static android.provider.Settings.Secure.DOZE_ALWAYS_ON;
 import static android.provider.Settings.Secure.DOZE_ENABLED;
+import static android.provider.Settings.Secure.DOZE_CUSTOM_SCREEN_BRIGHTNESS_MODE;
+import static android.provider.Settings.Secure.DOZE_SCREEN_BRIGHTNESS;
+import static android.provider.Settings.System.SCREEN_BRIGHTNESS;
 
 public final class Utils {
-
-    private static final String TAG = "DozeUtils";
-    private static final boolean DEBUG = false;
-
     private static final String DOZE_INTENT = "com.android.systemui.doze.pulse";
 
     protected static final String ALWAYS_ON_DISPLAY = "always_on_display";
@@ -47,14 +44,15 @@ public final class Utils {
     protected static final String GESTURE_PICK_UP_KEY = "gesture_pick_up";
     protected static final String GESTURE_RAISE_TO_WAKE_KEY = "gesture_raise_to_wake";
 
+    protected static final String CUSTOM_AOD_BRIGHTNESS_KEY = "custom_aod_brightness_switch";
+    protected static final String CUSTOM_AOD_BRIGHTNESS_SEEKBAR_KEY = "custom_aod_brightness_seekbar";
+
     protected static void startService(Context context) {
-        if (DEBUG) Log.d(TAG, "Starting service");
         context.startServiceAsUser(new Intent(context, DozeService.class),
                 UserHandle.CURRENT);
     }
 
     protected static void stopService(Context context) {
-        if (DEBUG) Log.d(TAG, "Stopping service");
         context.stopServiceAsUser(new Intent(context, DozeService.class),
                 UserHandle.CURRENT);
     }
@@ -78,7 +76,6 @@ public final class Utils {
     }
 
     protected static void launchDozePulse(Context context) {
-        if (DEBUG) Log.d(TAG, "Launch doze pulse");
         context.sendBroadcastAsUser(new Intent(DOZE_INTENT),
                 new UserHandle(UserHandle.USER_CURRENT));
     }
@@ -131,5 +128,15 @@ public final class Utils {
             }
         }
         return null;
+    }
+
+    protected static void updateCustomBrightness(Context context, int newValue) {
+        Settings.Secure.putInt(context.getContentResolver(),
+            DOZE_SCREEN_BRIGHTNESS, newValue);
+    }
+
+    protected static void changeBrightnessMode(Context context, boolean state) {
+        Settings.Secure.putInt(context.getContentResolver(),
+            DOZE_CUSTOM_SCREEN_BRIGHTNESS_MODE, state ? 1 : 0);
     }
 }

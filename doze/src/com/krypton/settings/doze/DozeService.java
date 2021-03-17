@@ -23,17 +23,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.util.Log;
 
 public class DozeService extends Service {
-    private static final String TAG = "DozeService";
-    private static final boolean DEBUG = false;
-
     private PickupSensor mPickupSensor;
+    private int oldBrightness = -1;
 
     @Override
     public void onCreate() {
-        if (DEBUG) Log.d(TAG, "Creating service");
         mPickupSensor = new PickupSensor(this);
 
         IntentFilter screenStateFilter = new IntentFilter();
@@ -44,13 +40,11 @@ public class DozeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) Log.d(TAG, "Starting service");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        if (DEBUG) Log.d(TAG, "Destroying service");
         super.onDestroy();
         this.unregisterReceiver(mScreenStateReceiver);
         mPickupSensor.disable();
@@ -62,7 +56,6 @@ public class DozeService extends Service {
     }
 
     private void onDisplayOn() {
-        if (DEBUG) Log.d(TAG, "Display on");
         if (Utils.isPickUpEnabled(this) ||
                 Utils.isRaiseToWakeEnabled(this)) {
             mPickupSensor.disable();
@@ -70,7 +63,6 @@ public class DozeService extends Service {
     }
 
     private void onDisplayOff() {
-        if (DEBUG) Log.d(TAG, "Display off");
         if (Utils.isPickUpEnabled(this) ||
                 Utils.isRaiseToWakeEnabled(this)) {
             mPickupSensor.enable();

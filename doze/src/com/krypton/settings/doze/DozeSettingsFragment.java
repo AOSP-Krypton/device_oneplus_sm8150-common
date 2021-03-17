@@ -38,10 +38,13 @@ import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragment;
+import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
 public class DozeSettingsFragment extends PreferenceFragment implements OnPreferenceChangeListener,
         CompoundButton.OnCheckedChangeListener {
+
+    private Activity mActivity;
 
     private TextView mTextView;
     private View mSwitchBar;
@@ -50,26 +53,29 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
 
     private SwitchPreference mPickUpPreference;
     private SwitchPreference mRaiseToWakePreference;
+    private SwitchPreference mCustomBrightnessPreference;
+    private SeekBarPreference mBrightnessSeekBar;
 
     private Handler mHandler = new Handler();
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.doze_settings);
-        final ActionBar actionBar = getActivity().getActionBar();
+        mActivity = getActivity();
+        final ActionBar actionBar = mActivity.getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        SharedPreferences prefs = getActivity().getSharedPreferences("doze_settings",
+        SharedPreferences prefs = mActivity.getSharedPreferences("doze_settings",
                 Activity.MODE_PRIVATE);
         if (savedInstanceState == null && !prefs.getBoolean("first_help_shown", false)) {
             showHelp();
         }
 
-        boolean dozeEnabled = Utils.isDozeEnabled(getActivity());
+        boolean dozeEnabled = Utils.isDozeEnabled(mActivity);
 
         mAlwaysOnDisplayPreference = (SwitchPreference) findPreference(Utils.ALWAYS_ON_DISPLAY);
         mAlwaysOnDisplayPreference.setEnabled(dozeEnabled);
-        mAlwaysOnDisplayPreference.setChecked(Utils.isAlwaysOnEnabled(getActivity()));
+        mAlwaysOnDisplayPreference.setChecked(Utils.isAlwaysOnEnabled(mActivity));
         mAlwaysOnDisplayPreference.setOnPreferenceChangeListener(this);
 
         PreferenceCategory pickupSensorCategory = (PreferenceCategory) getPreferenceScreen().
@@ -83,12 +89,21 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
         mRaiseToWakePreference.setEnabled(dozeEnabled);
         mRaiseToWakePreference.setOnPreferenceChangeListener(this);
 
+        mCustomBrightnessPreference = (SwitchPreference) findPreference(Utils.CUSTOM_AOD_BRIGHTNESS_KEY);
+        mCustomBrightnessPreference.setEnabled(dozeEnabled);
+        mCustomBrightnessPreference.setOnPreferenceChangeListener(this);
+
+        mBrightnessSeekBar = (SeekBarPreference) findPreference(Utils.CUSTOM_AOD_BRIGHTNESS_SEEKBAR_KEY);
+        mBrightnessSeekBar.setDependency(Utils.CUSTOM_AOD_BRIGHTNESS_KEY);
+        mBrightnessSeekBar.setShowSeekBarValue(true);
+        mBrightnessSeekBar.setMin(1);
+        mBrightnessSeekBar.setOnPreferenceChangeListener(this);
+
         // Hide AOD if not supported and set all its dependents otherwise
-        if (!Utils.alwaysOnDisplayAvailable(getActivity())) {
+        if (!Utils.alwaysOnDisplayAvailable(mActivity)) {
             getPreferenceScreen().removePreference(mAlwaysOnDisplayPreference);
         } else {
             pickupSensorCategory.setDependency(Utils.ALWAYS_ON_DISPLAY);
-
             mPickUpPreference.setDependency(Utils.GESTURE_RAISE_TO_WAKE_KEY);
         }
     }
@@ -105,7 +120,7 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        boolean dozeEnabled = Utils.isDozeEnabled(getActivity());
+        boolean dozeEnabled = Utils.isDozeEnabled(mActivity);
 
         mTextView = view.findViewById(R.id.switch_text);
         mTextView.setText(getString(dozeEnabled ?
@@ -124,50 +139,55 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (Utils.ALWAYS_ON_DISPLAY.equals(preference.getKey())) {
-            Utils.enableAlwaysOn(getActivity(), (Boolean) newValue);
+        switch (preference.getKey()) {
+            case Utils.ALWAYS_ON_DISPLAY:
+                Utils.enableAlwaysOn(mActivity, (Boolean) newValue);
+                break;
+            case Utils.GESTURE_RAISE_TO_WAKE_KEY:
+                Utils.setPickUp(findPreference(Utils.GESTURE_PICK_UP_KEY), (Boolean) newValue);
+                break;
+            case Utils.CUSTOM_AOD_BRIGHTNESS_KEY:
+                Utils.changeBrightnessMode(getContext(), ((Boolean) newValue).booleanValue());
+                break;
+            case Utils.CUSTOM_AOD_BRIGHTNESS_SEEKBAR_KEY:
+                Utils.updateCustomBrightness(getContext(), ((Integer) newValue).intValue());
         }
-
-        if (Utils.GESTURE_RAISE_TO_WAKE_KEY.equals(preference.getKey())) {
-            Utils.setPickUp(findPreference(Utils.GESTURE_PICK_UP_KEY), (Boolean) newValue);
-        }
-
-        mHandler.post(() -> Utils.checkDozeService(getActivity()));
-
+        mHandler.post(() -> Utils.checkDozeService(mActivity));
         return true;
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        Utils.enableDoze(getActivity(), isChecked);
-        Utils.checkDozeService(getActivity());
+        Utils.enableDoze(mActivity, isChecked);
+        Utils.checkDozeService(mActivity);
 
         mTextView.setText(getString(isChecked ? R.string.switch_bar_on : R.string.switch_bar_off));
         mSwitchBar.setActivated(isChecked);
 
         if (!isChecked) {
-            Utils.enableAlwaysOn(getActivity(), false);
+            Utils.enableAlwaysOn(mActivity, false);
             mAlwaysOnDisplayPreference.setChecked(false);
         }
         mAlwaysOnDisplayPreference.setEnabled(isChecked);
 
         mPickUpPreference.setEnabled(isChecked);
         mRaiseToWakePreference.setEnabled(isChecked);
+        mCustomBrightnessPreference.setEnabled(isChecked);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            getActivity().onBackPressed();
+            mActivity.onBackPressed();
             return true;
         }
         return false;
     }
 
-    private static class HelpDialogFragment extends DialogFragment {
+    private class HelpDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
+            return new AlertDialog.Builder(mActivity)
                     .setTitle(R.string.doze_settings_help_title)
                     .setMessage(R.string.doze_settings_help_text)
                     .setNegativeButton(R.string.dialog_ok, (dialog, which) -> dialog.cancel())
@@ -176,7 +196,7 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
 
         @Override
         public void onCancel(DialogInterface dialog) {
-            getActivity().getSharedPreferences("doze_settings", Activity.MODE_PRIVATE)
+            mActivity.getSharedPreferences("doze_settings", Activity.MODE_PRIVATE)
                     .edit()
                     .putBoolean("first_help_shown", true)
                     .commit();
@@ -184,7 +204,7 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
     }
 
     private void showHelp() {
-        HelpDialogFragment fragment = new HelpDialogFragment();
-        fragment.show(getFragmentManager(), "help_dialog");
+        new HelpDialogFragment()
+            .show(getFragmentManager(), "help_dialog");
     }
 }

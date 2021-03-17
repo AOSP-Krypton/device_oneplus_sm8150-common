@@ -2,6 +2,7 @@
 <!--
      Copyright (C) 2015 The CyanogenMod Project
                    2018-2019 The LineageOS Project
+                   2021 AOSP-Krypton Project
 
      Licensed under the Apache License, Version 2.0 (the "License"
      you may not use this file except in compliance with the License.
@@ -42,6 +43,25 @@
             android:key="gesture_raise_to_wake"
             android:summary="@string/raise_to_wake_gesture_summary"
             android:title="@string/raise_to_wake_gesture_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="custom_brightness"
+        android:title="@string/custom_brightness_category_title">
+
+        <SwitchPreference
+            android:key="custom_aod_brightness_switch"
+            android:defaultValue="false"
+            android:disableDependentsState="false"
+            android:title="@string/custom_aod_brightness_title"
+            android:summary="@string/custom_aod_brightness_summary"
+            android:icon="@drawable/ic_brightness" />
+
+        <SeekBarPreference
+            android:key="custom_aod_brightness_seekbar"
+            android:defaultValue="1"
+            android:max="30" />
 
     </PreferenceCategory>
 
