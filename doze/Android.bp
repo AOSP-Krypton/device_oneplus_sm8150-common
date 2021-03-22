@@ -1,0 +1,18 @@
+android_app {
+    name: "OnePlusDoze",
+    platform_apis: true,
+    certificate: "platform",
+    privileged: true,
+    static_libs: [
+        "com.krypton.settings.resources",
+    ],
+    srcs: [
+        "src/**/*.java",
+    ],
+    resource_dirs: [
+        "res",
+    ],
+    optimize: {
+        proguard_flags_files: ["proguard.flags"],
+    },
+}
