@@ -22,4 +22,13 @@
     <!-- Device specific doze package -->
     <string name="config_customDozePackage">com.krypton.settings.doze/com.krypton.settings.doze.DozeSettingsActivity</string>
     <string name="ambient_display_custom_title">Ambient Display Settings</string>
+
+    <!-- Defines the location of the fingerprint sensor on the device
+         0 = back
+         1 = front
+         2 = left side
+         3 = right side
+         4 = FOD (front)
+    -->
+    <integer name="config_fingerprintSensorLocation">4</integer>
 </resources>
