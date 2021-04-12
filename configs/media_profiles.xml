@@ -181,7 +181,7 @@
              frameRate="30" />
 <!-- wangbuqing@media ,20190718 ,[HD-1693] change aac encoder maxBitRate from 156000 to 192000 -->
       <Audio codec="aac"
-             bitRate="192000"
+             bitRate="156000"
              sampleRate="48000"
              channels="2" />
     </EncoderProfile>
@@ -1745,7 +1745,7 @@
 
 <!-- wangbuqing@media ,20190718 ,[HD-1693] change aac encoder maxBitRate from 96000 to 192000 -->
     <AudioEncoderCap name="aac" enabled="true"
-        minBitRate="8000" maxBitRate="192000"
+        minBitRate="8000" maxBitRate="96000"
         minSampleRate="8000" maxSampleRate="48000"
         minChannels="1" maxChannels="6" />
 
