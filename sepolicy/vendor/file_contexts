@@ -54,7 +54,6 @@
 /dev/socket/vl53l1_daemon    u:object_r:vl53l1_socket:s0
 
 # Sys files
-/sys/module/fsc(/.*)?                                              u:object_r:sysfs_fsc:s0
 /sys/devices/platform/vendor/vendor:motor_pl(/.*)?                 u:object_r:sysfs_motor:s0
 /sys/project_info(/.*)?                                            u:object_r:sysfs_project_info:s0
 /sys/module/stmvl53l1(/.*)?                                        u:object_r:sysfs_vl53l1:s0
