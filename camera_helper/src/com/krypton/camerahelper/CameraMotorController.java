@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019 The LineageOS Project
+ * Copyright (C) 2019 The LineageOS Project
+ *               2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +56,7 @@ public class CameraMotorController {
         // This class is not supposed to be instantiated
     }
 
-    public static void calibrate() {
+    protected static final void calibrate() {
         String calibrationData = HALL_CALIBRATION_DEFAULT;
 
         try {
@@ -72,28 +73,34 @@ public class CameraMotorController {
         }
     }
 
-    public static void setMotorDirection(String direction) {
+    private static final void setMotorDirection(String direction) {
         try {
             FileUtils.stringToFile(CAMERA_MOTOR_DIRECTION_PATH, direction);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to write to " + CAMERA_MOTOR_DIRECTION_PATH, e);
-        }
-    }
-
-    public static void setMotorEnabled() {
-        try {
             FileUtils.stringToFile(CAMERA_MOTOR_ENABLE_PATH, ENABLED);
         } catch (IOException e) {
-            Log.e(TAG, "Failed to write to " + CAMERA_MOTOR_ENABLE_PATH, e);
+            Log.e(TAG, "Failed to write", e);
         }
     }
 
-    public static String getMotorPosition() {
+    private static final String getMotorPosition() {
         try {
             return FileUtils.readTextFile(new File(CAMERA_MOTOR_POSITION_PATH), 1, null);
         } catch (IOException e) {
             Log.e(TAG, "Failed to read " + CAMERA_MOTOR_POSITION_PATH, e);
         }
         return null;
+    }
+
+    protected static final void closeCamera() {
+        setMotorDirection(DIRECTION_DOWN);
+    }
+
+    protected static final void openCamera() {
+        setMotorDirection(DIRECTION_UP);
+    }
+
+    protected static final boolean isCameraClosed() {
+        String pos = getMotorPosition();
+        return pos != null && pos.equals(POSITION_DOWN);
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 The LineageOS Project
+ *               2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +25,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 
 public class CameraMotorService extends Service implements Handler.Callback {
-    private static final boolean DEBUG = true;
-    private static final String TAG = "CameraMotorService";
-
     public static final int CAMERA_EVENT_DELAY_TIME = 100; // ms
 
     public static final String FRONT_CAMERA_ID = "1";
@@ -37,7 +34,7 @@ public class CameraMotorService extends Service implements Handler.Callback {
     public static final int MSG_CAMERA_CLOSED = 1000;
     public static final int MSG_CAMERA_OPEN = 1001;
 
-    private Handler mHandler = new Handler(this);
+    private final Handler mHandler = new Handler(this);
 
     private long mClosedEvent;
     private long mOpenEvent;
@@ -78,20 +75,17 @@ public class CameraMotorService extends Service implements Handler.Callback {
     @Override
     public void onCreate() {
         CameraMotorController.calibrate();
-
-        CameraManager cameraManager = getSystemService(CameraManager.class);
-        cameraManager.registerAvailabilityCallback(mAvailabilityCallback, null);
+        getSystemService(CameraManager.class)
+            .registerAvailabilityCallback(mAvailabilityCallback, null);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DEBUG) Log.d(TAG, "Starting service");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        if (DEBUG) Log.d(TAG, "Destroying service");
         super.onDestroy();
     }
 
@@ -104,12 +98,10 @@ public class CameraMotorService extends Service implements Handler.Callback {
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case MSG_CAMERA_CLOSED:
-                CameraMotorController.setMotorDirection(CameraMotorController.DIRECTION_DOWN);
-                CameraMotorController.setMotorEnabled();
+                CameraMotorController.closeCamera();
                 break;
             case MSG_CAMERA_OPEN:
-                CameraMotorController.setMotorDirection(CameraMotorController.DIRECTION_UP);
-                CameraMotorController.setMotorEnabled();
+                CameraMotorController.openCamera();
                 break;
         }
         return true;

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019 The LineageOS Project
+ * Copyright (C) 2019 The LineageOS Project
+ *               2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +20,10 @@ package com.krypton.camerahelper;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
-    private static final String TAG = "OnePlusCameraHelper";
-
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Log.d(TAG, "Starting");
         context.startService(new Intent(context, CameraMotorService.class));
         context.startService(new Intent(context, FallSensorService.class));
     }

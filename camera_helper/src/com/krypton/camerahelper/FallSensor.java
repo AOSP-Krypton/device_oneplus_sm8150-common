@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019 The LineageOS Project
+ * Copyright (C) 2019 The LineageOS Project
+ *               2021 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +27,12 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.WindowManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FallSensor implements SensorEventListener {
-    private static final boolean DEBUG = true;
-    private static final String TAG = "FallSensor";
 
     private ExecutorService mExecutorService;
     private SensorManager mSensorManager;
@@ -47,9 +45,7 @@ public class FallSensor implements SensorEventListener {
         mExecutorService = Executors.newSingleThreadExecutor();
 
         for (Sensor sensor : mSensorManager.getSensorList(Sensor.TYPE_ALL)) {
-            if (DEBUG) Log.d(TAG, "Sensor type: " + sensor.getStringType());
             if (TextUtils.equals(sensor.getStringType(), "oneplus.sensor.free_fall")) {
-                if (DEBUG) Log.d(TAG, "Found fall sensor");
                 mSensor = sensor;
                 break;
             }
@@ -62,27 +58,21 @@ public class FallSensor implements SensorEventListener {
             return;
         }
 
-        Log.d(TAG, "Fall detected, ensuring front camera is closed");
-
         // We shouldn't really bother doing anything if motor is already closed
-        if (CameraMotorController.getMotorPosition().equals(CameraMotorController.POSITION_DOWN)) {
+        if (CameraMotorController.isCameraClosed()) {
             return;
         }
 
         // Close the camera
-        CameraMotorController.setMotorDirection(CameraMotorController.DIRECTION_DOWN);
-        CameraMotorController.setMotorEnabled();
+        CameraMotorController.closeCamera();
 
         // Show alert dialog informing user that we closed the camera
         new Handler(Looper.getMainLooper()).post(() -> {
             AlertDialog alertDialog = new AlertDialog.Builder(mContext)
                     .setTitle(R.string.free_fall_detected_title)
                     .setMessage(R.string.free_fall_detected_message)
-                    .setNegativeButton(R.string.raise_the_camera, (dialog, which) -> {
-                        // Reopen the camera
-                        CameraMotorController.setMotorDirection(CameraMotorController.DIRECTION_UP);
-                        CameraMotorController.setMotorEnabled();
-                    })
+                    .setNegativeButton(R.string.raise_the_camera, (dialog, which) ->
+                        CameraMotorController.openCamera())
                     .setPositiveButton(R.string.close, (dialog, which) -> {
                         // Go back to home screen
                         Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -103,14 +93,12 @@ public class FallSensor implements SensorEventListener {
     }
 
     void enable() {
-        if (DEBUG) Log.d(TAG, "Enabling");
         mExecutorService.submit(() -> {
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
         });
     }
 
     void disable() {
-        if (DEBUG) Log.d(TAG, "Disabling");
         mExecutorService.submit(() -> {
             mSensorManager.unregisterListener(this, mSensor);
         });
