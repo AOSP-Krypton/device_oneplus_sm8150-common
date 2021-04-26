@@ -24,4 +24,10 @@
     <!-- Whether the binned brightness sensor reports a value of 0 on proximity
          near events -->
     <bool name="doze_brightness_sensor_reports_proximity">false</bool>
+
+    <!-- Whether device has hardware alert slider -->
+    <bool name="config_hasAlertSlider">true</bool>
+
+    <!-- Offset for alert slider dialog from status bar -->
+    <integer name="config_alertSliderOffset">800</integer>
 </resources>
