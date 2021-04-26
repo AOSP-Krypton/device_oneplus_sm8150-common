@@ -17,4 +17,10 @@
 <resources>
     <!-- Burn-in protection shift interval -->
     <integer name="config_shift_interval">30</integer>
+
+    <!-- Whether device has hardware alert slider -->
+    <bool name="config_hasAlertSlider">true</bool>
+
+    <!-- Offset for alert slider dialog from status bar -->
+    <integer name="config_alertSliderOffset">800</integer>
 </resources>
