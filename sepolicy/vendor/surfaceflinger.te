@@ -1,0 +1,5 @@
+# Allow surfaceflinger to search firmware directory
+allow surfaceflinger vendor_firmware_file:dir search;
+
+# Allow surfaceflinger to read firmware files
+allow surfaceflinger vendor_firmware_file:file r_file_perms;

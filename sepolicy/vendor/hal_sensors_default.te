@@ -47,3 +47,6 @@ get_prop(hal_sensors_default, vendor_sensors_prop)
 
 # Allow hal_sensors_default to get vendor_sensors_als_prop
 get_prop(hal_sensors_default, vendor_sensors_als_prop)
+
+# Allow hal_sensors_default access to sysfs_aod nodes
+allow hal_sensors_default sysfs_aod:file rw_file_perms;
