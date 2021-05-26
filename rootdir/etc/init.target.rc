@@ -188,6 +188,7 @@ on boot
     restorecon /sys/kernel/debug/regmap/0-0035/registers
     restorecon /sys/kernel/debug/regmap/0-0042/registers
     restorecon /sys/kernel/debug/regmap/tavil-slim-pgd/registers
+
 on property:vendor.display.lcd_density=560
    setprop dalvik.vm.heapgrowthlimit 256m
 
