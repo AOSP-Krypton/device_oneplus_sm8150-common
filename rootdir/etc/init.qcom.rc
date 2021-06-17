@@ -331,6 +331,9 @@ on post-fs-data
     mkdir /data/vendor/audio/acdbdata 0770 media audio
     mkdir /data/vendor/audio/acdbdata/delta 0770 media audio
 
+    # Create directory for ultrasound_monitor
+    mkdir /data/vendor/audio/ultrasound 0770 media audio
+
     # Create directory for radio
     mkdir /data/vendor/radio 0770 system radio
     rm /data/vendor/radio/shmbus
