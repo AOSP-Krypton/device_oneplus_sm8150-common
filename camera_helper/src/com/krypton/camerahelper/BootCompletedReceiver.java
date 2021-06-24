@@ -17,6 +17,8 @@
 
 package com.krypton.camerahelper;
 
+import static android.os.UserHandle.SYSTEM;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +26,7 @@ import android.content.Intent;
 public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
-        context.startService(new Intent(context, CameraMotorService.class));
-        context.startService(new Intent(context, FallSensorService.class));
+        context.startServiceAsUser(new Intent(context, CameraMotorService.class), SYSTEM);
+        context.startServiceAsUser(new Intent(context, FallSensorService.class), SYSTEM);
     }
 }
