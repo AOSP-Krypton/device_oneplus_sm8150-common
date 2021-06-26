@@ -21,59 +21,62 @@ import android.annotation.NonNull;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraManager.AvailabilityCallback;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Looper;
+import android.os.Process;
 import android.os.SystemClock;
 
-public class CameraMotorService extends Service implements Handler.Callback {
-    public static final int CAMERA_EVENT_DELAY_TIME = 100; // ms
+public final class CameraMotorService extends Service implements Handler.Callback {
+    private static final String TAG = "CameraMotorService";
+    private static final String FRONT_CAMERA_ID = "1";
+    private static final int CAMERA_EVENT_DELAY_TIME = 100; // ms
+    private static final int MSG_CAMERA_CLOSED = 1000;
+    private static final int MSG_CAMERA_OPEN = 1001;
 
-    public static final String FRONT_CAMERA_ID = "1";
+    private HandlerThread mHandlerThread;
+    private Handler mHandler;
 
-    public static final int MSG_CAMERA_CLOSED = 1000;
-    public static final int MSG_CAMERA_OPEN = 1001;
+    private long mClosedEvent, mOpenEvent;
 
-    private final Handler mHandler = new Handler(this);
-
-    private long mClosedEvent;
-    private long mOpenEvent;
-
-    private CameraManager.AvailabilityCallback mAvailabilityCallback =
-            new CameraManager.AvailabilityCallback() {
-                @Override
-                public void onCameraAvailable(@NonNull String cameraId) {
-                    super.onCameraAvailable(cameraId);
-
-                    if (cameraId.equals(FRONT_CAMERA_ID)) {
-                        mClosedEvent = SystemClock.elapsedRealtime();
-                        if (SystemClock.elapsedRealtime() - mOpenEvent < CAMERA_EVENT_DELAY_TIME
-                                && mHandler.hasMessages(MSG_CAMERA_OPEN)) {
-                            mHandler.removeMessages(MSG_CAMERA_OPEN);
-                        }
-                        mHandler.sendEmptyMessageDelayed(MSG_CAMERA_CLOSED,
-                                CAMERA_EVENT_DELAY_TIME);
-                    }
+    private AvailabilityCallback mAvailabilityCallback = new AvailabilityCallback() {
+        @Override
+        public void onCameraAvailable(@NonNull String cameraId) {
+            super.onCameraAvailable(cameraId);
+            if (cameraId.equals(FRONT_CAMERA_ID)) {
+                mClosedEvent = SystemClock.elapsedRealtime();
+                if (mClosedEvent - mOpenEvent < CAMERA_EVENT_DELAY_TIME
+                        && mHandler.hasMessages(MSG_CAMERA_OPEN)) {
+                    mHandler.removeMessages(MSG_CAMERA_OPEN);
                 }
+                mHandler.sendEmptyMessageDelayed(MSG_CAMERA_CLOSED,
+                    CAMERA_EVENT_DELAY_TIME);
+            }
+        }
 
-                @Override
-                public void onCameraUnavailable(@NonNull String cameraId) {
-                    super.onCameraAvailable(cameraId);
-
-                    if (cameraId.equals(FRONT_CAMERA_ID)) {
-                        mOpenEvent = SystemClock.elapsedRealtime();
-                        if (SystemClock.elapsedRealtime() - mClosedEvent < CAMERA_EVENT_DELAY_TIME
-                                && mHandler.hasMessages(MSG_CAMERA_CLOSED)) {
-                            mHandler.removeMessages(MSG_CAMERA_CLOSED);
-                        }
-                        mHandler.sendEmptyMessageDelayed(MSG_CAMERA_OPEN,
-                                CAMERA_EVENT_DELAY_TIME);
-                    }
+        @Override
+        public void onCameraUnavailable(@NonNull String cameraId) {
+            super.onCameraUnavailable(cameraId);
+            if (cameraId.equals(FRONT_CAMERA_ID)) {
+                mOpenEvent = SystemClock.elapsedRealtime();
+                if (mOpenEvent - mClosedEvent < CAMERA_EVENT_DELAY_TIME
+                        && mHandler.hasMessages(MSG_CAMERA_CLOSED)) {
+                    mHandler.removeMessages(MSG_CAMERA_CLOSED);
                 }
-            };
+                mHandler.sendEmptyMessageDelayed(MSG_CAMERA_OPEN,
+                    CAMERA_EVENT_DELAY_TIME);
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
+        mHandlerThread = new HandlerThread(TAG, Process.THREAD_PRIORITY_BACKGROUND);
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper(), this);
         CameraMotorController.calibrate();
         getSystemService(CameraManager.class)
             .registerAvailabilityCallback(mAvailabilityCallback, null);
@@ -86,7 +89,7 @@ public class CameraMotorService extends Service implements Handler.Callback {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        mHandlerThread.quitSafely();
     }
 
     @Override

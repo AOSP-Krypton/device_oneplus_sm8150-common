@@ -24,18 +24,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 
-public class FallSensorService extends Service {
+public final class FallSensorService extends Service {
 
     private FallSensor mFallSensor;
 
-    private BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_SCREEN_ON)) {
-                mFallSensor.enable();
-            } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
-                mFallSensor.disable();
+            switch (intent.getAction()) {
+                case Intent.ACTION_SCREEN_ON:
+                    mFallSensor.enable();
+                    break;
+                case Intent.ACTION_SCREEN_OFF:
+                    mFallSensor.disable();
+                    break;
             }
         }
     };
@@ -43,8 +45,7 @@ public class FallSensorService extends Service {
     @Override
     public void onCreate() {
         mFallSensor = new FallSensor(this);
-
-        IntentFilter intentFilter = new IntentFilter();
+        final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(mScreenStateReceiver, intentFilter);

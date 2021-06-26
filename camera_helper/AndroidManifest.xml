@@ -10,25 +10,23 @@
 
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="21"/>
+        android:targetSdkVersion="30"/>
 
     <application
         android:label="OnePlusCameraHelper"
         android:persistent="true">
 
-        <receiver android:name="com.krypton.camerahelper.BootCompletedReceiver">
+        <receiver android:name=".BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-        <service android:name="com.krypton.camerahelper.CameraMotorService"
-                 android:permission="OnePlusCameraHelperService">
-        </service>
+        <service android:name=".CameraMotorService"
+                 android:exported="false" />
 
-        <service android:name="com.krypton.camerahelper.FallSensorService"
-                 android:permission="OnePlusCameraHelperService">
-        </service>
+        <service android:name=".FallSensorService"
+                 android:exported="false" />
     </application>
 </manifest>

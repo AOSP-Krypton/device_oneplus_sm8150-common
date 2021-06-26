@@ -24,13 +24,13 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 
-public class CameraMotorController {
+public final class CameraMotorController {
     private static final String TAG = "CameraMotorController";
 
     // Camera motor paths
     private static final String CAMERA_MOTOR_ENABLE_PATH =
             "/sys/devices/platform/vendor/vendor:motor_pl/enable";
-    public static final String CAMERA_MOTOR_HALL_CALIBRATION =
+    private static final String CAMERA_MOTOR_HALL_CALIBRATION =
             "/sys/devices/platform/vendor/vendor:motor_pl/hall_calibration";
     private static final String CAMERA_MOTOR_DIRECTION_PATH =
             "/sys/devices/platform/vendor/vendor:motor_pl/direction";
@@ -38,34 +38,33 @@ public class CameraMotorController {
             "/sys/devices/platform/vendor/vendor:motor_pl/position";
 
     // Motor calibration data path
-    public static final String CAMERA_PERSIST_HALL_CALIBRATION =
+    private static final String CAMERA_PERSIST_HALL_CALIBRATION =
             "/mnt/vendor/persist/engineermode/hall_calibration";
 
     // Motor fallback calibration data
-    public static final String HALL_CALIBRATION_DEFAULT =
+    private static final String HALL_CALIBRATION_DEFAULT =
             "170,170,480,0,0,480,500,0,0,500,1500";
 
     // Motor control values
-    public static final String DIRECTION_DOWN = "0";
-    public static final String DIRECTION_UP = "1";
-    public static final String ENABLED = "1";
-    public static final String POSITION_DOWN = "1";
-    public static final String POSITION_UP = "0";
+    private static final String DIRECTION_DOWN = "0";
+    private static final String DIRECTION_UP = "1";
+    private static final String ENABLED = "1";
+    private static final String POSITION_DOWN = "1";
+
+    private static final File positionFile = new File(CAMERA_MOTOR_POSITION_PATH);
 
     private CameraMotorController() {
         // This class is not supposed to be instantiated
     }
 
-    protected static final void calibrate() {
+    protected static void calibrate() {
         String calibrationData = HALL_CALIBRATION_DEFAULT;
-
         try {
             calibrationData = FileUtils.readTextFile(
                     new File(CAMERA_PERSIST_HALL_CALIBRATION), 0, null);
         } catch (IOException e) {
             Log.e(TAG, "Failed to read " + CAMERA_PERSIST_HALL_CALIBRATION, e);
         }
-
         try {
             FileUtils.stringToFile(CAMERA_MOTOR_HALL_CALIBRATION, calibrationData);
         } catch (IOException e) {
@@ -73,7 +72,7 @@ public class CameraMotorController {
         }
     }
 
-    private static final void setMotorDirection(String direction) {
+    private static void setMotorDirection(String direction) {
         try {
             FileUtils.stringToFile(CAMERA_MOTOR_DIRECTION_PATH, direction);
             FileUtils.stringToFile(CAMERA_MOTOR_ENABLE_PATH, ENABLED);
@@ -82,25 +81,21 @@ public class CameraMotorController {
         }
     }
 
-    private static final String getMotorPosition() {
-        try {
-            return FileUtils.readTextFile(new File(CAMERA_MOTOR_POSITION_PATH), 1, null);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to read " + CAMERA_MOTOR_POSITION_PATH, e);
-        }
-        return null;
-    }
-
-    protected static final void closeCamera() {
+    protected static void closeCamera() {
         setMotorDirection(DIRECTION_DOWN);
     }
 
-    protected static final void openCamera() {
+    protected static void openCamera() {
         setMotorDirection(DIRECTION_UP);
     }
 
-    protected static final boolean isCameraClosed() {
-        String pos = getMotorPosition();
-        return pos != null && pos.equals(POSITION_DOWN);
+    protected static boolean isCameraClosed() {
+        try {
+            return TextUtils.equals(
+                FileUtils.readTextFile(positionFile, 1, null), POSITION_DOWN);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to read " + CAMERA_MOTOR_POSITION_PATH, e);
+        }
+        return false;
     }
 }

@@ -28,7 +28,7 @@ import android.view.WindowManager;
 
 import com.android.internal.os.DeviceKeyHandler;
 
-public class KeyHandler implements DeviceKeyHandler {
+public final class KeyHandler implements DeviceKeyHandler {
     private static final String TAG = "KeyHandler";
     private static final int DOWN = KeyEvent.ACTION_DOWN;
 
@@ -38,8 +38,8 @@ public class KeyHandler implements DeviceKeyHandler {
     private static final int MOTOR_EVENT_DOWN_ABNORMAL = 189;
 
     private final Context mContext;
-    private Context mPackageContext = null;
     private final Handler mHandler;
+    private Context mPackageContext;
 
     public KeyHandler(Context context) {
         mContext = context;

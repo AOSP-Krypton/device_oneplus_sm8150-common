@@ -29,20 +29,17 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.view.WindowManager;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+public final class FallSensor implements SensorEventListener {
 
-public class FallSensor implements SensorEventListener {
-
-    private ExecutorService mExecutorService;
-    private SensorManager mSensorManager;
+    private final SensorManager mSensorManager;
+    private final Context mContext;
+    private final Handler mHandler;
     private Sensor mSensor;
-    private Context mContext;
 
     public FallSensor(Context context) {
         mContext = context;
         mSensorManager = mContext.getSystemService(SensorManager.class);
-        mExecutorService = Executors.newSingleThreadExecutor();
+        mHandler = new Handler(Looper.getMainLooper());
 
         for (Sensor sensor : mSensorManager.getSensorList(Sensor.TYPE_ALL)) {
             if (TextUtils.equals(sensor.getStringType(), "oneplus.sensor.free_fall")) {
@@ -54,12 +51,7 @@ public class FallSensor implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.values[0] <= 0) {
-            return;
-        }
-
-        // We shouldn't really bother doing anything if motor is already closed
-        if (CameraMotorController.isCameraClosed()) {
+        if (event.values[0] <= 0 || CameraMotorController.isCameraClosed()) {
             return;
         }
 
@@ -67,8 +59,8 @@ public class FallSensor implements SensorEventListener {
         CameraMotorController.closeCamera();
 
         // Show alert dialog informing user that we closed the camera
-        new Handler(Looper.getMainLooper()).post(() -> {
-            AlertDialog alertDialog = new AlertDialog.Builder(mContext)
+        mHandler.post(() -> {
+            final AlertDialog alertDialog = new AlertDialog.Builder(mContext)
                     .setTitle(R.string.free_fall_detected_title)
                     .setMessage(R.string.free_fall_detected_message)
                     .setNegativeButton(R.string.raise_the_camera, (dialog, which) ->
@@ -93,14 +85,10 @@ public class FallSensor implements SensorEventListener {
     }
 
     void enable() {
-        mExecutorService.submit(() -> {
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        });
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     void disable() {
-        mExecutorService.submit(() -> {
-            mSensorManager.unregisterListener(this, mSensor);
-        });
+        mSensorManager.unregisterListener(this, mSensor);
     }
 }

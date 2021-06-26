@@ -23,9 +23,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class BootCompletedReceiver extends BroadcastReceiver {
+public final class BootCompletedReceiver extends BroadcastReceiver {
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         context.startServiceAsUser(new Intent(context, CameraMotorService.class), SYSTEM);
         context.startServiceAsUser(new Intent(context, FallSensorService.class), SYSTEM);
     }
