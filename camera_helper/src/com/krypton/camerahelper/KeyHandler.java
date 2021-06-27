@@ -51,30 +51,25 @@ public final class KeyHandler implements DeviceKeyHandler {
         mHandler = new Handler(Looper.getMainLooper());
     }
 
-    public KeyEvent handleKeyEvent(KeyEvent event) {
-        int scanCode = event.getScanCode();
-        int action = event.getAction();
-
-        switch (scanCode) {
+    @Override
+    public boolean handleKeyEvent(KeyEvent event) {
+        if (event.getAction() != DOWN) {
+            return false;
+        }
+        switch (event.getScanCode()) {
             case MOTOR_EVENT_MANUAL_TO_DOWN:
-                if (action == DOWN) {
-                    showCameraMotorPressWarning();
-                }
+                showCameraMotorPressWarning();
                 break;
             case MOTOR_EVENT_UP_ABNORMAL:
-                if (action == DOWN) {
-                    showCameraMotorCannotGoUpWarning();
-                }
+                showCameraMotorCannotGoUpWarning();
                 break;
             case MOTOR_EVENT_DOWN_ABNORMAL:
-                if (action == DOWN) {
-                    showCameraMotorCannotGoDownWarning();
-                }
+                showCameraMotorCannotGoDownWarning();
                 break;
             default:
-                return event;
+                return false;
         }
-        return null;
+        return true;
     }
 
     private void showCameraMotorCannotGoDownWarning() {

@@ -26,9 +26,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.UserHandle;
+import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
-import android.preference.PreferenceActivity;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
@@ -39,24 +39,17 @@ import com.android.internal.krypton.hardware.TouchscreenGesture; // Need FWB sup
 
 import com.krypton.settings.device.R;
 
-import java.lang.System;
-
 public class TouchscreenGestureSettingsActivity extends PreferenceActivity
         implements PreferenceFragment.OnPreferenceStartFragmentCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, getNewFragment())
+                    .replace(android.R.id.content, new MainSettingsFragment())
                     .commit();
         }
-    }
-
-    private PreferenceFragment getNewFragment() {
-        return new MainSettingsFragment();
     }
 
     @Override
@@ -208,29 +201,13 @@ public class TouchscreenGestureSettingsActivity extends PreferenceActivity
             intent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
             context.sendBroadcastAsUser(intent, UserHandle.CURRENT);
         }
-
-        @Override
-        public void onSaveInstanceState(Bundle outState) {
-            super.onSaveInstanceState(outState);
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-        }
-
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

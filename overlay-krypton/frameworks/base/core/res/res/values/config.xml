@@ -26,7 +26,6 @@
     <string-array name="config_deviceKeyHandlerClasses" translatable="false">
         <item>com.krypton.camerahelper.KeyHandler</item>
         <item>com.krypton.settings.device.KeyHandler</item>
-        <item>com.krypton.settings.device.TouchKeyHandler</item>
     </string-array>
 
     <!-- The list of vendor package signatures that should also be considered
