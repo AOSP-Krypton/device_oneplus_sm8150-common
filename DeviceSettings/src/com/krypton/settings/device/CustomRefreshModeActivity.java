@@ -16,7 +16,6 @@
 
 package com.krypton.settings.device;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,7 +28,6 @@ import com.krypton.settings.device.fragments.CustomRefreshModeFragment;
 
 public class CustomRefreshModeActivity extends FragmentActivity {
 
-    private ActionBar actionBar;
     private CustomRefreshModeFragment mFragment;
     private SearchView mSearchView;
     private boolean mShowSystem = false;
@@ -39,9 +37,7 @@ public class CustomRefreshModeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_refresh_rate_settings);
         mFragment = (CustomRefreshModeFragment) getSupportFragmentManager().findFragmentById(R.id.custom_refresh_rate_fragment);
-        actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(getResources().getString(R.string.custom_refresh_rate_fragment_title));
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

@@ -16,7 +16,6 @@
 
 package com.krypton.settings.device;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -26,18 +25,14 @@ import com.krypton.settings.device.fragments.DeviceSettingsFragment;
 
 public class DeviceSettingsActivity extends FragmentActivity {
 
-    private ActionBar actionBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(getResources().getString(R.string.device_settings_title));
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .add(android.R.id.content, new DeviceSettingsFragment(), null)
+                .replace(android.R.id.content, new DeviceSettingsFragment(), null)
                 .commit();
         }
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 The CyanogenMod Project
- * Copyright (C) 2017 The LineageOS Project
+ *               2017 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@
 package com.krypton.settings.device;
 
 public class Constants {
-
-    // Broadcast action for settings update
-    static final String UPDATE_PREFS_ACTION = "com.krypton.settings.device.UPDATE_SETTINGS";
-
     // Screen off Gesture actions
     static final int ACTION_FLASHLIGHT = 1;
     static final int ACTION_CAMERA = 2;
@@ -34,9 +30,5 @@ public class Constants {
     static final int ACTION_NEXT_TRACK = 9;
     static final int ACTION_VOLUME_DOWN = 10;
     static final int ACTION_VOLUME_UP = 11;
-
-    // Broadcast extra: keycode mapping (int[]: key = gesture ID, value = keycode)
-    static final String UPDATE_EXTRA_KEYCODE_MAPPING = "keycode_mappings";
-    // Broadcast extra: assigned actions (int[]: key = gesture ID, value = action)
-    static final String UPDATE_EXTRA_ACTION_MAPPING = "action_mappings";
+    static final int ACTION_WAKEUP = 12;
 }
