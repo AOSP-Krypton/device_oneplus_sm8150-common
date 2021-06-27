@@ -1,65 +1,47 @@
 /*
-* Copyright (C) 2013 The OmniROM Project
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+ * Copyright (C) 2013 The OmniROM Project
+ *               2021 AOSP-Krypton Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.krypton.settings.device;
 
+import static com.android.internal.lineage.hardware.LineageHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
+
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.provider.Settings;
-import android.text.TextUtils;
 
-import androidx.preference.PreferenceManager;
+import androidx.annotation.Keep;
 
+import com.android.internal.lineage.hardware.LineageHardwareManager;
+import com.android.internal.lineage.hardware.TouchscreenGesture;
+
+@Keep
 public class BootCompletedReceiver extends BroadcastReceiver {
 
-    private static final String ONE_TIME_TUNABLE_RESTORE = "hardware_tunable_restored";
-
-    private void restore(String file, boolean enabled) {
-        if (file == null) {
-            return;
-        }
-        if (enabled) {
-            Utils.write(file, "1");
-        }
-    }
-
-    private void restore(String file, String value) {
-        if (file == null) {
-            return;
-        }
-        Utils.write(file, value);
-    }
-
     @Override
-    public void onReceive(final Context context, final Intent bootintent) {
-        boolean enabled = false;
-        TouchscreenGestureSettingsActivity.MainSettingsFragment.restoreTouchscreenGestureStates(context);
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    private boolean hasRestoredTunable(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(ONE_TIME_TUNABLE_RESTORE, false);
-    }
-
-    private void setRestoredTunable(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        preferences.edit().putBoolean(ONE_TIME_TUNABLE_RESTORE, true).apply();
+    public void onReceive(Context context, Intent intent) {
+        final ContentResolver resolver = context.getContentResolver();
+        LineageHardwareManager mHardwareManager = LineageHardwareManager.getInstance(context);
+        if (mHardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
+            for (TouchscreenGesture gesture: mHardwareManager.getTouchscreenGestures()) {
+                int action = Settings.System.getInt(resolver, Utils.getResName(gesture.name), 0);
+                mHardwareManager.setTouchscreenGestureEnabled(gesture, action > 0);
+            }
+        }
     }
 }

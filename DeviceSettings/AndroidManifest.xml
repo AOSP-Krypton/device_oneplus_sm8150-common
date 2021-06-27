@@ -18,13 +18,15 @@
     android:sharedUserId="android.uid.system">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.DEVICE_POWER" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <protected-broadcast android:name="KeyEvent.SLIDER_KEY_CHANGED" />
-    <protected-broadcast android:name="com.krypton.settings.device.UPDATE_SETTINGS" />
+    <protected-broadcast android:name="android.intent.action.SCREEN_CAMERA_GESTURE" />
 
     <uses-sdk
         android:minSdkVersion="30"
@@ -33,7 +35,8 @@
     <application
         android:title="@string/device_settings_title"
         android:theme="@style/DeviceSettingsTheme"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:directBootAware="true">
 
         <!-- Device Settings -->
         <activity
@@ -47,5 +50,11 @@
         <activity
             android:name=".TouchscreenGestureSettingsActivity"
             android:label="@string/touchscreen_gesture_settings_title" />
+
+        <receiver android:name=".BootCompletedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

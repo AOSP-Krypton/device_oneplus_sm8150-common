@@ -6,13 +6,20 @@ android_app {
     defaults: [
         "SettingsLibDefaults",
     ],
+    required: [
+        "privapp_whitelist_com.krypton.settings.device",
+    ],
     srcs: [
         "src/**/*.java",
     ],
     resource_dirs: [
         "res",
     ],
-    optimize: {
-        enabled: false,
-    },
+}
+
+prebuilt_etc {
+    name: "privapp_whitelist_com.krypton.settings.device",
+    sub_dir: "permissions",
+    src: "privapp-permissions-devicesettings.xml",
+    filename_from_src: true,
 }
