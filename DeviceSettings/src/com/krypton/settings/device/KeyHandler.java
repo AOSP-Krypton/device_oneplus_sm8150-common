@@ -23,9 +23,6 @@ import static com.android.internal.krypton.hardware.KryptonHardwareManager.FEATU
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-import static android.hardware.camera2.CameraCharacteristics.LENS_FACING;
-import static android.hardware.camera2.CameraCharacteristics.LENS_FACING_BACK;
-import static android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE;
 import static android.media.AudioManager.ADJUST_LOWER;
 import static android.media.AudioManager.ADJUST_RAISE;
 import static android.media.AudioManager.RINGER_MODE_NORMAL;
@@ -46,11 +43,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraManager.AvailabilityCallback;
-import android.hardware.camera2.CameraManager.TorchCallback;
 import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
@@ -72,6 +64,7 @@ import androidx.annotation.NonNull;
 import com.android.internal.os.DeviceKeyHandler;
 import com.android.internal.krypton.hardware.KryptonHardwareManager;
 import com.android.internal.krypton.hardware.TouchscreenGesture;
+import com.android.internal.util.krypton.KryptonUtils;
 
 import java.util.List;
 
@@ -100,56 +93,8 @@ public class KeyHandler implements DeviceKeyHandler {
     private final AudioManager mAudioManager;
     private final PowerManager mPowerManager;
     private final EventHandler mHandler;
-    private final CameraManager mCameraManager;
     private final Vibrator mVibrator;
     private final SparseArray<String> mSettingMap;
-
-    private String mRearCameraId;
-    private boolean mTorchEnabled;
-
-    private final TorchCallback mTorchCallback = new TorchCallback() {
-        @Override
-        public void onTorchModeChanged(String cameraId, boolean enabled) {
-            if (cameraId.equals(mRearCameraId)) {
-                mTorchEnabled = enabled;
-            }
-        }
-
-        @Override
-        public void onTorchModeUnavailable(String cameraId) {
-            if (cameraId.equals(mRearCameraId)) {
-                mTorchEnabled = false;
-            }
-        }
-    };
-
-    private final AvailabilityCallback mAvailabilityCallback = new AvailabilityCallback() {
-        @Override
-        public void onCameraAvailable(@NonNull String cameraId) {
-            try {
-                if (mRearCameraId != null) {
-                    return;
-                }
-                CameraCharacteristics cc = mCameraManager.getCameraCharacteristics(cameraId);
-                Integer lensFacing = cc.get(LENS_FACING);
-                if (lensFacing != null && lensFacing.intValue() == LENS_FACING_BACK) {
-                    Boolean flashAvailable = cc.get(FLASH_INFO_AVAILABLE);
-                    if (flashAvailable != null && flashAvailable.booleanValue()) {
-                        mRearCameraId = cameraId;
-                    }
-                }
-            } catch (CameraAccessException e) {
-                // Ignore
-            }
-        }
-
-        @Override
-        public void onCameraUnavailable(@NonNull String cameraId) {
-            if (mRearCameraId != null && mRearCameraId.equals(cameraId)) {
-                mRearCameraId = null;
-            }
-        }
-    };
 
     public KeyHandler(Context context) {
         mContext = context;
@@ -158,11 +103,8 @@ public class KeyHandler implements DeviceKeyHandler {
 
         mAudioManager = mContext.getSystemService(AudioManager.class);
         mPowerManager = mContext.getSystemService(PowerManager.class);
-        mCameraManager = mContext.getSystemService(CameraManager.class);
         mVibrator = mContext.getSystemService(Vibrator.class);
 
-        mCameraManager.registerTorchCallback(mTorchCallback, mHandler);
-        mCameraManager.registerAvailabilityCallback(mAvailabilityCallback, mHandler);
         mSettingMap = new SparseArray<>();
         mapScanCode();
     }
@@ -245,14 +187,7 @@ public class KeyHandler implements DeviceKeyHandler {
     }
 
     private void toggleFlashlight() {
-        if (mRearCameraId != null) {
-            try {
-                mCameraManager.setTorchMode(mRearCameraId, !mTorchEnabled);
-                mTorchEnabled = !mTorchEnabled;
-            } catch (CameraAccessException e) {
-                // Ignore
-            }
-        }
+        KryptonUtils.toggleCameraFlash();
     }
 
     private void playPauseMusic() {
