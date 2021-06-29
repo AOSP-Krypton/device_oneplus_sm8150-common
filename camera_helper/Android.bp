@@ -1,15 +1,11 @@
 android_app {
     name: "OnePlusCameraHelper",
-
     srcs: ["src/**/*.java"],
-
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
     certificate: "platform",
     platform_apis: true,
     privileged: true,
-
     resource_dirs: ["res"],
-
-    optimize: {
-        proguard_flags_files: ["proguard.flags"],
-    },
 }

@@ -45,7 +45,6 @@ public final class CameraMotorService extends Service implements Handler.Callbac
     private AvailabilityCallback mAvailabilityCallback = new AvailabilityCallback() {
         @Override
         public void onCameraAvailable(@NonNull String cameraId) {
-            super.onCameraAvailable(cameraId);
             if (cameraId.equals(FRONT_CAMERA_ID)) {
                 mClosedEvent = SystemClock.elapsedRealtime();
                 if (mClosedEvent - mOpenEvent < CAMERA_EVENT_DELAY_TIME
@@ -59,7 +58,6 @@ public final class CameraMotorService extends Service implements Handler.Callbac
 
         @Override
         public void onCameraUnavailable(@NonNull String cameraId) {
-            super.onCameraUnavailable(cameraId);
             if (cameraId.equals(FRONT_CAMERA_ID)) {
                 mOpenEvent = SystemClock.elapsedRealtime();
                 if (mOpenEvent - mClosedEvent < CAMERA_EVENT_DELAY_TIME

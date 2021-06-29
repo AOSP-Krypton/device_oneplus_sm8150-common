@@ -17,6 +17,8 @@
 
 package com.krypton.camerahelper;
 
+import static android.view.KeyEvent.ACTION_DOWN;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,11 +28,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
+import androidx.annotation.Keep;
+
 import com.android.internal.os.DeviceKeyHandler;
 
+@Keep
 public final class KeyHandler implements DeviceKeyHandler {
     private static final String TAG = "KeyHandler";
-    private static final int DOWN = KeyEvent.ACTION_DOWN;
 
     // Camera motor event key codes
     private static final int MOTOR_EVENT_MANUAL_TO_DOWN = 184;
@@ -53,7 +57,7 @@ public final class KeyHandler implements DeviceKeyHandler {
 
     @Override
     public boolean handleKeyEvent(KeyEvent event) {
-        if (event.getAction() != DOWN) {
+        if (event.getAction() != ACTION_DOWN) {
             return false;
         }
         switch (event.getScanCode()) {
