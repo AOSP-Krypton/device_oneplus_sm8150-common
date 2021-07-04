@@ -32,6 +32,7 @@ import static android.media.AudioManager.STREAM_MUSIC;
 import static android.Manifest.permission.STATUS_BAR_SERVICE;
 import static android.os.PowerManager.WAKE_REASON_GESTURE;
 import static android.os.UserHandle.CURRENT;
+import static android.os.UserHandle.SYSTEM;
 import static android.provider.Settings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK;
 import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
@@ -257,9 +258,9 @@ public class KeyHandler implements DeviceKeyHandler {
     }
 
     private void sendSliderBroadcast(int code) {
-        Intent intent = new Intent("KeyEvent.SLIDER_KEY_CHANGED");
-        intent.putExtra("SLIDER_POSITION", code - MODE_NORMAL);
-        mContext.sendBroadcastAsUser(intent, CURRENT);
+        final Intent intent = new Intent(Intent.ACTION_SLIDER_POSITION_CHANGED);
+        intent.putExtra(Intent.EXTRA_SLIDER_POSITION, code - MODE_NORMAL);
+        mContext.sendBroadcastAsUser(intent, SYSTEM);
     }
 
     private Intent getLaunchableIntent(Intent intent) {
