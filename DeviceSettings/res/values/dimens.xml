@@ -14,8 +14,7 @@
      limitations under the License.
 -->
 <resources>
-    <dimen name="reset_button_min_width">100dp</dimen>
-    <dimen name="default_padding">16dp</dimen>
-    <dimen name="default_margin">10dp</dimen>
-    <dimen name="fragment_margin_top">5dp</dimen>
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="app_icon_size">40dp</dimen>
+    <dimen name="textview_padding_default">8dp</dimen>
 </resources>

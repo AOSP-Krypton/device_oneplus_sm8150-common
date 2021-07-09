@@ -73,10 +73,8 @@ import java.util.List;
 public class KeyHandler implements DeviceKeyHandler {
 
     private static final String TAG = "KeyHandler";
-    private static final String GESTURE_WAKELOCK_TAG = "touchscreen-gesture-wakelock";
     private static final String GESTURE_WAKEUP_REASON = "touchscreen-gesture-wakeup";
     private static final int GESTURE_REQUEST = 1;
-    private static final int GESTURE_WAKELOCK_DURATION = 1000;
 
     // AlertSlider key codes
     private static final int MODE_NORMAL = 601;

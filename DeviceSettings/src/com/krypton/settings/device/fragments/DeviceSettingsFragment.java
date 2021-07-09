@@ -16,7 +16,6 @@
 
 package com.krypton.settings.device.fragments;
 
-import static android.provider.Settings.System.CUSTOM_REFRESH_RATE_MODE;
 import static android.provider.Settings.System.PEAK_REFRESH_RATE;
 import static android.provider.Settings.System.MIN_REFRESH_RATE;
 
@@ -46,7 +45,7 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat {
         mContext = getContext();
         mResolver = mContext.getContentResolver();
         mCustomModePreference = findPreference(KEY_CUSTOM_MODE);
-        mCustomModePreference.setEnabled(Settings.System.getInt(mResolver, CUSTOM_REFRESH_RATE_MODE, 0) == 1);
+        mCustomModePreference.setEnabled(Settings.System.getInt(mResolver, MIN_REFRESH_RATE, 60) == 90);
     }
 
     @Override
@@ -55,9 +54,7 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat {
         if (key != null) {
             if (key.equals(KEY_FORCE_90)) {
                 boolean state = Utils.isChecked(preference);
-                int rate = state == true ? 90 : 60;
-                setRefreshRate(rate);
-                setCustomRefreshMode(state);
+                setRefreshRate(state ? 90 : 60);
                 mCustomModePreference.setEnabled(state);
             }
         }
@@ -67,9 +64,5 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat {
     private void setRefreshRate(int rate) {
         Settings.System.putInt(mResolver, PEAK_REFRESH_RATE, rate);
         Settings.System.putInt(mResolver, MIN_REFRESH_RATE, rate);
-    }
-
-    private void setCustomRefreshMode(boolean state) {
-        Settings.System.putInt(mResolver, CUSTOM_REFRESH_RATE_MODE, state ? 1 : 0);
     }
 }

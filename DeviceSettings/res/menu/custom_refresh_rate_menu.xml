@@ -17,7 +17,7 @@
 
     <item
         android:id="@+id/search_apps_menu_item"
-        android:title="@string/string_search_app"
+        android:title="@string/string_search"
         android:icon="@drawable/ic_find_in_page_24px"
         android:showAsAction="always|collapseActionView"
         android:actionViewClass="android.widget.SearchView" />
@@ -25,5 +25,9 @@
     <item
         android:id="@+id/show_system"
         android:title="@string/string_show_system" />
+
+    <item
+        android:id="@+id/reset_choices"
+        android:title="@string/string_reset_choices" />
 
 </menu>

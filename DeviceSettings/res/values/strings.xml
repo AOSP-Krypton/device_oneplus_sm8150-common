@@ -20,17 +20,17 @@
 
     <!-- Refresh Rate -->
     <string name="refresh_rate_settings_title">Screen Refresh Rate</string>
-    <string name="force_90_switch_title">Force 90 Hz globally</string>
+    <string name="force_90_switch_title">Force 90 Hz</string>
     <string name="force_60_summary">Current mode: 60 Hz</string>
     <string name="force_90_summary">Current mode: 90 Hz</string>
     <string name="custom_refresh_rate_preference_title">Click to configure apps</string>
-    <string name="custom_refresh_rate_preference_summary">Choose which should run on 60/90 Hz</string>
+    <string name="custom_refresh_rate_preference_summary">Choose which apps should run on 60/90 Hz</string>
     <string name="custom_refresh_rate_fragment_title">Apps</string>
     <string name="custom_refresh_rate_screen_title">Selected apps will run in 60 Hz</string>
-    <string name="clear_all">CLEAR ALL</string>
-    <string name="string_search_app">Search</string>
+    <string name="string_search">Search</string>
     <string name="string_show_system">Show System</string>
     <string name="string_hide_system">Hide System</string>
+    <string name="string_reset_choices">Reset choices</string>
 
     <string name="display_title">Display</string>
 

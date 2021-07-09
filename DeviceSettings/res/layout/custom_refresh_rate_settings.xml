@@ -13,35 +13,28 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/custom_refresh_rate_resetbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:minWidth="@dimen/reset_button_min_width"
-        android:text="@string/clear_all"
-        android:textAlignment="center" />
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/custom_refresh_rate_resetbutton"
-        android:layout_alignTop="@+id/custom_refresh_rate_resetbutton"
-        android:layout_alignBaseline="@+id/custom_refresh_rate_resetbutton"
-        android:paddingStart="@dimen/default_padding"
+        style="@android:style/TextAppearance.DeviceDefault"
+        android:padding="@dimen/textview_padding_default"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:fontFamily="@*android:string/config_bodyFontFamily"
         android:text="@string/custom_refresh_rate_screen_title" />
 
-    <fragment
-        android:id="@+id/custom_refresh_rate_fragment"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/fragment_margin_top"
-        android:layout_below="@+id/custom_refresh_rate_resetbutton"
-        android:name="com.krypton.settings.device.fragments.CustomRefreshModeFragment" />
+        android:layout_height="1dp"
+        android:background="?android:attr/colorControlNormal" />
 
-</RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/custom_refresh_rate_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

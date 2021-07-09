@@ -6,6 +6,10 @@ android_app {
     defaults: [
         "SettingsLibDefaults",
     ],
+    static_libs: [
+        "androidx-constraintlayout_constraintlayout",
+        "androidx-constraintlayout_constraintlayout-solver",
+    ],
     required: [
         "privapp_whitelist_com.krypton.settings.device",
     ],
