@@ -3,3 +3,6 @@ allow vendor_qti_init_shell vendor_sysfs_scsi_host:file w_file_perms;
 
 # Allow vendor_qti_init_shell to wrtie to kmsg_device
 allow vendor_qti_init_shell kmsg_device:file w_file_perms;
+
+allow vendor_qti_init_shell kmsg_device:chr_file w_file_perms;
+allow vendor_qti_init_shell ctl_stop_prop:property_service set;
