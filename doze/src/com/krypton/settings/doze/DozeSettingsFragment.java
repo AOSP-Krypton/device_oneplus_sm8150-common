@@ -38,7 +38,6 @@ import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragment;
-import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
 public class DozeSettingsFragment extends PreferenceFragment implements OnPreferenceChangeListener,
@@ -53,8 +52,6 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
 
     private SwitchPreference mPickUpPreference;
     private SwitchPreference mRaiseToWakePreference;
-    private SwitchPreference mCustomBrightnessPreference;
-    private SeekBarPreference mBrightnessSeekBar;
 
     private Handler mHandler = new Handler();
 
@@ -88,16 +85,6 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
         mRaiseToWakePreference = (SwitchPreference) findPreference(Utils.GESTURE_RAISE_TO_WAKE_KEY);
         mRaiseToWakePreference.setEnabled(dozeEnabled);
         mRaiseToWakePreference.setOnPreferenceChangeListener(this);
-
-        mCustomBrightnessPreference = (SwitchPreference) findPreference(Utils.CUSTOM_AOD_BRIGHTNESS_KEY);
-        mCustomBrightnessPreference.setEnabled(dozeEnabled);
-        mCustomBrightnessPreference.setOnPreferenceChangeListener(this);
-
-        mBrightnessSeekBar = (SeekBarPreference) findPreference(Utils.CUSTOM_AOD_BRIGHTNESS_SEEKBAR_KEY);
-        mBrightnessSeekBar.setDependency(Utils.CUSTOM_AOD_BRIGHTNESS_KEY);
-        mBrightnessSeekBar.setShowSeekBarValue(true);
-        mBrightnessSeekBar.setMin(1);
-        mBrightnessSeekBar.setOnPreferenceChangeListener(this);
 
         // Hide AOD if not supported and set all its dependents otherwise
         if (!Utils.alwaysOnDisplayAvailable(mActivity)) {
@@ -145,12 +132,6 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
                 break;
             case Utils.GESTURE_RAISE_TO_WAKE_KEY:
                 Utils.setPickUp(findPreference(Utils.GESTURE_PICK_UP_KEY), (Boolean) newValue);
-                break;
-            case Utils.CUSTOM_AOD_BRIGHTNESS_KEY:
-                Utils.changeBrightnessMode(getContext(), ((Boolean) newValue).booleanValue());
-                break;
-            case Utils.CUSTOM_AOD_BRIGHTNESS_SEEKBAR_KEY:
-                Utils.updateCustomBrightness(getContext(), ((Integer) newValue).intValue());
         }
         mHandler.post(() -> Utils.checkDozeService(mActivity));
         return true;
@@ -172,7 +153,6 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
 
         mPickUpPreference.setEnabled(isChecked);
         mRaiseToWakePreference.setEnabled(isChecked);
-        mCustomBrightnessPreference.setEnabled(isChecked);
     }
 
     @Override

@@ -45,24 +45,4 @@
             android:title="@string/raise_to_wake_gesture_title" />
 
     </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="custom_brightness"
-        android:title="@string/custom_brightness_category_title">
-
-        <SwitchPreference
-            android:key="custom_aod_brightness_switch"
-            android:defaultValue="false"
-            android:disableDependentsState="false"
-            android:title="@string/custom_aod_brightness_title"
-            android:summary="@string/custom_aod_brightness_summary"
-            android:icon="@drawable/ic_brightness" />
-
-        <SeekBarPreference
-            android:key="custom_aod_brightness_seekbar"
-            android:defaultValue="1"
-            android:max="30" />
-
-    </PreferenceCategory>
-
 </PreferenceScreen>

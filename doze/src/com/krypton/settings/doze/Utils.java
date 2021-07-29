@@ -30,9 +30,6 @@ import androidx.preference.SwitchPreference;
 
 import static android.provider.Settings.Secure.DOZE_ALWAYS_ON;
 import static android.provider.Settings.Secure.DOZE_ENABLED;
-import static android.provider.Settings.Secure.DOZE_CUSTOM_SCREEN_BRIGHTNESS_MODE;
-import static android.provider.Settings.Secure.DOZE_SCREEN_BRIGHTNESS;
-import static android.provider.Settings.System.SCREEN_BRIGHTNESS;
 
 public final class Utils {
     private static final String DOZE_INTENT = "com.android.systemui.doze.pulse";
@@ -43,9 +40,6 @@ public final class Utils {
 
     protected static final String GESTURE_PICK_UP_KEY = "gesture_pick_up";
     protected static final String GESTURE_RAISE_TO_WAKE_KEY = "gesture_raise_to_wake";
-
-    protected static final String CUSTOM_AOD_BRIGHTNESS_KEY = "custom_aod_brightness_switch";
-    protected static final String CUSTOM_AOD_BRIGHTNESS_SEEKBAR_KEY = "custom_aod_brightness_seekbar";
 
     protected static void startService(Context context) {
         context.startServiceAsUser(new Intent(context, DozeService.class),
@@ -128,15 +122,5 @@ public final class Utils {
             }
         }
         return null;
-    }
-
-    protected static void updateCustomBrightness(Context context, int newValue) {
-        Settings.Secure.putInt(context.getContentResolver(),
-            DOZE_SCREEN_BRIGHTNESS, newValue);
-    }
-
-    protected static void changeBrightnessMode(Context context, boolean state) {
-        Settings.Secure.putInt(context.getContentResolver(),
-            DOZE_CUSTOM_SCREEN_BRIGHTNESS_MODE, state ? 1 : 0);
     }
 }
