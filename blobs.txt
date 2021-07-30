@@ -280,20 +280,6 @@ vendor/lib64/vendor.display.color@1.4.so
 vendor/lib64/vendor.display.color@1.5.so
 vendor/lib64/vendor.display.postproc@1.0.so
 
-# Dolby
--system/priv-app/DolbyAtmos/DolbyAtmos.apk
-system/etc/permissions/privapp-permissions-dolby.xml
-vendor/bin/hw/vendor.dolby.hardware.dms@1.0-service
-vendor/etc/dap-default.xml
-vendor/etc/init/vendor.dolby.hardware.dms@1.0-service.rc
-vendor/lib/libdapparamstorage.so
-vendor/lib/soundfx/libatmos.so
-vendor/lib/vendor.dolby.hardware.dms@1.0.so
-vendor/lib64/libdapparamstorage.so
-vendor/lib64/soundfx/libatmos.so
-vendor/lib64/vendor.dolby.hardware.dms@1.0-impl.so
-vendor/lib64/vendor.dolby.hardware.dms@1.0.so
-
 # DPM
 framework/tcmclient.jar
 system_ext/bin/dpmd
