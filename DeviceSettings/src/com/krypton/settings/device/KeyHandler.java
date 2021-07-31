@@ -330,7 +330,9 @@ public class KeyHandler implements DeviceKeyHandler {
                 case Constants.ACTION_AMBIENT_DISPLAY:
                     launchDozePulse();
             }
-            doHapticFeedback();
+            if (msg.arg1 != Constants.ACTION_AMBIENT_DISPLAY) {
+                doHapticFeedback();
+            }
         }
     }
 }
