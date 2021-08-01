@@ -37,6 +37,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final ContentResolver resolver = context.getContentResolver();
         LineageHardwareManager mHardwareManager = LineageHardwareManager.getInstance(context);
+        VibratorStrengthPreference.restore(context);
         if (mHardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
             for (TouchscreenGesture gesture: mHardwareManager.getTouchscreenGestures()) {
                 int action = Settings.System.getInt(resolver, Utils.getResName(gesture.name), 0);
