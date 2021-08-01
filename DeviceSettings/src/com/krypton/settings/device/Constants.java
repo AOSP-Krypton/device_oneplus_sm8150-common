@@ -32,4 +32,8 @@ public class Constants {
     static final int ACTION_VOLUME_UP = 11;
     static final int ACTION_WAKEUP = 12;
     static final int ACTION_AMBIENT_DISPLAY = 13;
+
+    // Vibrations
+    static final String KEY_VIBSTRENGTH = "vib_strength";
+    static final String KEY_SETTINGS_PREFIX = "device_setting_";
 }
