@@ -52,7 +52,6 @@ void AlsCorrection::init() {
     cali_coe = get("/mnt/vendor/persist/engineermode/cali_coe", 1000);
     max_brightness = get("/sys/class/backlight/panel0-backlight/max_brightness", 255);
     max_lux = red_max_lux + green_max_lux + blue_max_lux + white_max_lux;
-    ALOGD("max r = %d, max g = %d, max b = %d, max_white: %d, cali_coe: %d, als_bias: %d, max_brightness: %d, max_lux: %d", red_max_lux, green_max_lux, blue_max_lux, white_max_lux, cali_coe, als_bias, max_brightness, max_lux);
     als_change_light_diff = 0.0f;
     als_change_light_diff_local = 0.0f;
     prev_color_adj_light = 0.0f;
@@ -84,16 +83,12 @@ void AlsCorrection::correct(float& light) {
     clock_gettime(CLOCK_MONOTONIC, &now);
     if (now.tv_sec - lastSensorUpdate >= 5) {
         sensor_was_off = true;
-        ALOGD("sensor_was_off: %d currTime: %ld lastSensorUpdate: %ld", sensor_was_off ? 1:0, now.tv_sec, lastSensorUpdate);
     }
     uint8_t r = property_get_int32("vendor.sensors.als_correction.r", 0);
     uint8_t g = property_get_int32("vendor.sensors.als_correction.g", 0);
     uint8_t b = property_get_int32("vendor.sensors.als_correction.b", 0);
-    ALOGV("Screen Color Above Sensor: %d, %d, %d", r, g, b);
-    ALOGV("Original reading: %f", light);
     int screen_brightness = get("/sys/class/backlight/panel0-backlight/brightness", 0);
     if (screen_brightness == 0){
-        ALOGD("Screen is off light: %f", light);
         light = (prev_color_adj_light - als_change_light_diff_local);
         return;
     }
@@ -183,7 +178,6 @@ void AlsCorrection::correct(float& light) {
         prev_color_correction = color_correction;
     }
 
-    ALOGD("Raw: %f Color: %f Corrected: %f correction: %f brightness: %d als_change_light: %f als_color_change_light: %f change: %f change_thresh: %f als_: %d", light, prev_color_adj_light, (prev_color_adj_light - als_change_light_diff_local), color_correction, screen_brightness, als_change_light_diff, als_color_change_light_offset, change, change_threshold, als_change ? 1:0);
     light = (prev_color_adj_light - als_change_light_diff_local);
 }
 
