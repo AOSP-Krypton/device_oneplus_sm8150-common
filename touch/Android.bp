@@ -14,9 +14,9 @@
 // limitations under the License.
 
 cc_binary {
-    name: "vendor.krypton.touch@1.0-service.oneplus_msmnile",
-    init_rc: ["vendor.krypton.touch@1.0-service.oneplus_msmnile.rc"],
-    vintf_fragments: ["vendor.krypton.touch@1.0-service.oneplus_msmnile.xml"],
+    name: "vendor.lineage.touch@1.0-service.oneplus_msmnile",
+    init_rc: ["vendor.lineage.touch@1.0-service.oneplus_msmnile.rc"],
+    vintf_fragments: ["vendor.lineage.touch@1.0-service.oneplus_msmnile.xml"],
     defaults: ["hidl_defaults"],
     relative_install_path: "hw",
     srcs: [
@@ -28,7 +28,7 @@ cc_binary {
         "libbinder",
         "libhidlbase",
         "libutils",
-        "vendor.krypton.touch@1.0",
+        "vendor.lineage.touch@1.0",
     ],
     proprietary: true,
 }

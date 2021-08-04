@@ -42,7 +42,7 @@
 #define NATIVE_DISPLAY_WIDE "/sys/class/drm/card0-DSI-1/native_display_wide_color_mode"
 
 namespace vendor {
-namespace krypton {
+namespace lineage {
 namespace biometrics {
 namespace fingerprint {
 namespace inscreen {
@@ -218,5 +218,5 @@ Return<int32_t> FingerprintInscreen::getSize() {
 }  // namespace inscreen
 }  // namespace fingerprint
 }  // namespace biometrics
-}  // namespace krypton
+}  // namespace lineage
 }  // namespace vendor

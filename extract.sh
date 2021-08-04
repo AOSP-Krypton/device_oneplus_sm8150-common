@@ -9,4 +9,4 @@ export DEVICE=sm8150-common
 export VENDOR=oneplus
 
 # Run the main extractor script
-./../../../vendor/krypton/scripts/extract-main.sh $*
+./../../../vendor/lineage/scripts/extract-main.sh $*

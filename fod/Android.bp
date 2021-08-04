@@ -37,15 +37,15 @@ oneplus_msmnile_fod_hal_cc_defaults {
 }
 
 cc_binary {
-    name: "vendor.krypton.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile",
+    name: "vendor.lineage.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile",
     defaults: [
         "hidl_defaults",
         "oneplus_msmnile_fod_hal_defaults",
     ],
     relative_install_path: "hw",
 
-    init_rc: ["vendor.krypton.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile.rc"],
-    vintf_fragments: ["vendor.krypton.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile.xml"],
+    init_rc: ["vendor.lineage.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile.rc"],
+    vintf_fragments: ["vendor.lineage.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile.xml"],
     srcs: ["service.cpp", "FingerprintInscreen.cpp"],
     shared_libs: [
         "libbase",
@@ -53,7 +53,7 @@ cc_binary {
         "libhidlbase",
         "liblog",
         "libutils",
-        "vendor.krypton.biometrics.fingerprint.inscreen@1.0",
+        "vendor.lineage.biometrics.fingerprint.inscreen@1.0",
         "//device/oneplus/common:vendor.oneplus.fingerprint.extension@1.0",
         "//device/oneplus/common:vendor.oneplus.hardware.display@1.0",
     ],
