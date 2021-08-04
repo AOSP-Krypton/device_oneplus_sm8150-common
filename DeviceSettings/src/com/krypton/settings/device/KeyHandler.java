@@ -18,7 +18,7 @@
 
 package com.krypton.settings.device;
 
-import static com.android.internal.krypton.hardware.KryptonHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
+import static com.android.internal.krypton.hardware.LineageHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -63,7 +63,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.android.internal.os.DeviceKeyHandler;
-import com.android.internal.krypton.hardware.KryptonHardwareManager;
+import com.android.internal.krypton.hardware.LineageHardwareManager;
 import com.android.internal.krypton.hardware.TouchscreenGesture;
 import com.android.internal.util.krypton.KryptonUtils;
 
@@ -153,7 +153,7 @@ public class KeyHandler implements DeviceKeyHandler {
     }
 
     private void mapScanCode() {
-        final KryptonHardwareManager manager = KryptonHardwareManager.getInstance(mContext);
+        final LineageHardwareManager manager = LineageHardwareManager.getInstance(mContext);
         if (manager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
             for (TouchscreenGesture gesture: manager.getTouchscreenGestures()) {
                 mSettingMap.put(gesture.keycode, Utils.getResName(gesture.name));

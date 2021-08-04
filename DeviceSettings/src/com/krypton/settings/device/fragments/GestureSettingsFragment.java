@@ -19,7 +19,7 @@
 package com.krypton.settings.device.fragments;
 
 import static android.provider.Settings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK;
-import static com.android.internal.krypton.hardware.KryptonHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
+import static com.android.internal.krypton.hardware.LineageHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -33,7 +33,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
-import com.android.internal.krypton.hardware.KryptonHardwareManager;
+import com.android.internal.krypton.hardware.LineageHardwareManager;
 import com.android.internal.krypton.hardware.TouchscreenGesture;
 
 import com.krypton.settings.device.R;
@@ -43,14 +43,14 @@ public class GestureSettingsFragment extends PreferenceFragmentCompat {
 
     private Context mContext;
     private ContentResolver mResolver;
-    private KryptonHardwareManager mHardwareManager;
+    private LineageHardwareManager mHardwareManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
         mResolver = mContext.getContentResolver();
-        mHardwareManager = KryptonHardwareManager.getInstance(mContext);
+        mHardwareManager = LineageHardwareManager.getInstance(mContext);
     }
 
     @Override

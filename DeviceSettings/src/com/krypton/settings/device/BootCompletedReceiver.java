@@ -17,7 +17,7 @@
 
 package com.krypton.settings.device;
 
-import static com.android.internal.krypton.hardware.KryptonHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
+import static com.android.internal.krypton.hardware.LineageHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -27,7 +27,7 @@ import android.provider.Settings;
 
 import androidx.annotation.Keep;
 
-import com.android.internal.krypton.hardware.KryptonHardwareManager;
+import com.android.internal.krypton.hardware.LineageHardwareManager;
 import com.android.internal.krypton.hardware.TouchscreenGesture;
 
 @Keep
@@ -36,7 +36,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         final ContentResolver resolver = context.getContentResolver();
-        KryptonHardwareManager mHardwareManager = KryptonHardwareManager.getInstance(context);
+        LineageHardwareManager mHardwareManager = LineageHardwareManager.getInstance(context);
         VibratorStrengthPreference.restore(context);
         if (mHardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
             for (TouchscreenGesture gesture: mHardwareManager.getTouchscreenGestures()) {
