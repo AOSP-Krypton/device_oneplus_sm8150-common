@@ -17,97 +17,89 @@
 */
 package com.krypton.settings.device;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
 import android.widget.SeekBar;
-import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceViewHolder;
+
+import com.android.internal.util.krypton.FileUtils;
 
 public class VibratorStrengthPreference extends Preference implements
         SeekBar.OnSeekBarChangeListener {
-
-    private SeekBar mSeekBar;
-    private int mOldStrength;
-    private int mMinValue;
-    private int mMaxValue;
-    private Vibrator mVibrator;
-
     private static final String FILE_LEVEL = "/sys/devices/platform/soc/89c000.i2c/i2c-2/2-005a/leds/vibrator/level";
+    private static final String SETTINGS_KEY = Constants.KEY_SETTINGS_PREFIX + Constants.KEY_VIBSTRENGTH;
+    private static final String DEFAULT = "2";
     private static final long testVibrationPattern[] = {0,250};
-    public static final String SETTINGS_KEY = Constants.KEY_SETTINGS_PREFIX + Constants.KEY_VIBSTRENGTH;
-    public static final String DEFAULT = "2";
+    private static final int mMinValue = 0;
+    private static final int mMaxValue = 10;
+    private final Context mContext;
+    private final Vibrator mVibrator;
+    private SeekBar mSeekBar;
+    private TextView mProgressValue;
 
     public VibratorStrengthPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // from drivers/platform/msm/qpnp-haptic.c
-        // #define QPNP_HAP_VMAX_MIN_MV		116
-        // #define QPNP_HAP_VMAX_MAX_MV		3596
-        mMinValue = 0;
-        mMaxValue = 10;
-
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        mContext = context;
+        mVibrator = context.getSystemService(Vibrator.class);
         setLayoutResource(R.layout.preference_seek_bar);
     }
 
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-
-        mOldStrength = Integer.parseInt(getValue(getContext()));
-        mSeekBar = (SeekBar) holder.findViewById(R.id.seekbar);
-        mSeekBar.setMax(mMaxValue - mMinValue);
-        mSeekBar.setProgress(mOldStrength - mMinValue);
+        mSeekBar = (SeekBar) holder.findViewById(R.id.seekBar);
+        mProgressValue = (TextView) holder.findViewById(R.id.progress_value);
+        final String currentValue = getValue();
+        mSeekBar.setMin(mMinValue);
+        mSeekBar.setMax(mMaxValue);
+        mSeekBar.setProgress(Integer.parseInt(currentValue));
         mSeekBar.setOnSeekBarChangeListener(this);
+        mProgressValue.setText(currentValue);
     }
 
-    public static boolean isSupported() {
-        return Utils.fileWritable(FILE_LEVEL);
-    }
-
-	public static String getValue(Context context) {
-        String val = Utils.getFileValue(FILE_LEVEL, DEFAULT);
-        return val;
+	private static String getValue() {
+        final String valueInFile = FileUtils.readOneLine(FILE_LEVEL);
+        return valueInFile == null ? DEFAULT : valueInFile;
 	}
 
 	private void setValue(String newValue, boolean withFeedback) {
-	    Utils.writeValue(FILE_LEVEL, newValue);
-        Settings.System.putString(getContext().getContentResolver(), SETTINGS_KEY, newValue);
+        mProgressValue.setText(newValue);
+	    FileUtils.writeLine(FILE_LEVEL, newValue);
+        Settings.System.putString(mContext.getContentResolver(), SETTINGS_KEY, newValue);
         if (withFeedback) {
             mVibrator.vibrate(testVibrationPattern, -1);
         }
 	}
 
     public static void restore(Context context) {
-        if (!isSupported()) {
+        if (!FileUtils.isFileWritable(FILE_LEVEL)) {
             return;
         }
         String storedValue = Settings.System.getString(context.getContentResolver(), SETTINGS_KEY);
         if (storedValue == null) {
             storedValue = DEFAULT;
         }
-
-        Utils.writeValue(FILE_LEVEL, storedValue);
+        FileUtils.writeLine(FILE_LEVEL, storedValue);
     }
 
+    @Override
     public void onProgressChanged(SeekBar seekBar, int progress,
             boolean fromTouch) {
-        setValue(String.valueOf(progress + mMinValue), true);
+        setValue(String.valueOf(progress), true);
     }
 
+    @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         // NA
     }
 
+    @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // NA
     }
