@@ -38,6 +38,7 @@ import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS;
 
+import android.app.KeyguardManager;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -82,6 +83,9 @@ public class KeyHandler implements DeviceKeyHandler {
     private static final int MODE_NORMAL = 601;
     private static final int MODE_VIBRATION = 602;
     private static final int MODE_SILENCE = 603;
+
+    // Single tap gesture action
+    private static final String SINGLE_TAP_GESTURE = "Single tap";
 
     // Vibration effects
     private static final VibrationEffect MODE_NORMAL_EFFECT =
@@ -144,6 +148,12 @@ public class KeyHandler implements DeviceKeyHandler {
         String key = mSettingMap.get(scanCode);
         if (key == null) {
             return false;
+        } else if (key.equals(Utils.getResName(SINGLE_TAP_GESTURE))) {
+            if (!mContext.getSystemService(KeyguardManager.class).isDeviceLocked()) {
+                // Wake up the device if it's not locked
+                wakeUp();
+                return true;
+            }
         }
         // Handle gestures
         int action = Settings.System.getInt(mResolver, key, 0);
@@ -212,7 +222,7 @@ public class KeyHandler implements DeviceKeyHandler {
     }
 
     private void wakeUp() {
-         mPowerManager.wakeUp(SystemClock.uptimeMillis(), WAKE_REASON_GESTURE, GESTURE_WAKEUP_REASON);
+        mPowerManager.wakeUp(SystemClock.uptimeMillis(), WAKE_REASON_GESTURE, GESTURE_WAKEUP_REASON);
     }
 
     private void launchDozePulse() {
