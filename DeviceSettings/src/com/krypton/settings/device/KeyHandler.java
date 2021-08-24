@@ -100,6 +100,7 @@ public class KeyHandler implements DeviceKeyHandler {
     private final EventHandler mHandler;
     private final Vibrator mVibrator;
     private final SparseArray<String> mSettingMap;
+    private KeyguardManager mKeyguardManager;
 
     public KeyHandler(Context context) {
         mContext = context;
@@ -149,8 +150,9 @@ public class KeyHandler implements DeviceKeyHandler {
         if (key == null) {
             return false;
         } else if (key.equals(Utils.getResName(SINGLE_TAP_GESTURE))) {
-            if (!mContext.getSystemService(KeyguardManager.class).isDeviceLocked()) {
-                // Wake up the device if it's not locked
+            getKeyguardManagerService();
+            if (mKeyguardManager != null && !mKeyguardManager.isDeviceLocked()) {
+                // Wakeup the device if not locked
                 wakeUp();
                 return true;
             }
@@ -288,6 +290,13 @@ public class KeyHandler implements DeviceKeyHandler {
             return null;
         }
         return pm.getLaunchIntentForPackage(resInfo.get(0).activityInfo.packageName);
+    }
+
+    private void getKeyguardManagerService() {
+        if (mKeyguardManager != null) {
+            return;
+        }
+        mKeyguardManager = mContext.getSystemService(KeyguardManager.class);
     }
 
     private final class EventHandler extends Handler {
