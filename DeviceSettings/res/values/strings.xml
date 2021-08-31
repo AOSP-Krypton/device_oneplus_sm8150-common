@@ -65,4 +65,14 @@
     <string name="vib_strength_summary_head">Define the strength of the vibrator</string>
     <string name="vibration_warning">Setting strength too high may cause permanent hardware damage</string>
 
+    <!-- AlertSlider -->
+    <string name="category_alert_slider">Alert Slider</string>
+    <string name="alert_slider_bottom_title">Action for bottom position</string>
+    <string name="alert_slider_middle_title">Action for middle position</string>
+    <string name="alert_slider_top_title">Action for top position</string>
+    <string name="mode_normal">Ring</string>
+    <string name="mode_priority">Priority</string>
+    <string name="mode_vibrate">Vibrate</string>
+    <string name="mode_silent">Silent</string>
+    <string name="mode_dnd">DND</string>
 </resources>

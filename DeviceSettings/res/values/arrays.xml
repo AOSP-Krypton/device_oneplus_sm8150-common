@@ -49,4 +49,13 @@
         <item>12</item>
         <item>13</item>
     </string-array>
+
+    <!-- AlertSlider actions -->
+    <string-array name="alert_slider_modes">
+        <item>@string/mode_normal</item>
+        <item>@string/mode_priority</item>
+        <item>@string/mode_vibrate</item>
+        <item>@string/mode_silent</item>
+        <item>@string/mode_dnd</item>
+    </string-array>
 </resources>

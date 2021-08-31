@@ -18,8 +18,6 @@
 
 package com.krypton.settings.device;
 
-import static com.android.internal.lineage.hardware.LineageHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
-
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
@@ -33,12 +31,20 @@ import static android.Manifest.permission.STATUS_BAR_SERVICE;
 import static android.os.PowerManager.WAKE_REASON_GESTURE;
 import static android.os.UserHandle.CURRENT;
 import static android.os.UserHandle.SYSTEM;
+import static android.provider.Settings.Global.ZEN_MODE_IMPORTANT_INTERRUPTIONS;
+import static android.provider.Settings.Global.ZEN_MODE_NO_INTERRUPTIONS;
+import static android.provider.Settings.Global.ZEN_MODE_OFF;
 import static android.provider.Settings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK;
+import static android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_BOTTOM;
+import static android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_MIDDLE;
+import static android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_TOP;
 import static android.view.KeyEvent.KEYCODE_MEDIA_NEXT;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
 import static android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+import static com.android.internal.lineage.hardware.LineageHardwareManager.FEATURE_TOUCHSCREEN_GESTURES;
 
 import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -61,41 +67,47 @@ import android.util.SparseArray;
 import android.view.KeyEvent;
 
 import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
 
-import com.android.internal.os.DeviceKeyHandler;
 import com.android.internal.lineage.hardware.LineageHardwareManager;
 import com.android.internal.lineage.hardware.TouchscreenGesture;
+import com.android.internal.os.DeviceKeyHandler;
+import com.android.internal.R;
 import com.android.internal.util.krypton.KryptonUtils;
 
 import java.util.List;
 
 @Keep
 public class KeyHandler implements DeviceKeyHandler {
-
     private static final String TAG = "KeyHandler";
     private static final String PULSE_ACTION = "com.android.systemui.doze.pulse";
     private static final String GESTURE_WAKEUP_REASON = "touchscreen-gesture-wakeup";
     private static final int GESTURE_REQUEST = 1;
-    private static final int GESTURE_WAKELOCK_DURATION = 1000;
 
-    // AlertSlider key codes
-    private static final int MODE_NORMAL = 601;
-    private static final int MODE_VIBRATION = 602;
-    private static final int MODE_SILENCE = 603;
+    // AlertSlider KeyEvent scanCodes
+    private static final int POSITION_BOTTOM = 601;
+    private static final int POSITION_MIDDLE = 602;
+    private static final int POSITION_TOP = 603;
 
     // Single tap gesture action
     private static final String SINGLE_TAP_GESTURE = "Single tap";
 
     // Vibration effects
-    private static final VibrationEffect MODE_NORMAL_EFFECT =
+    private static final VibrationEffect HEAVY_CLICK_EFFECT =
             VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK);
-    private static final VibrationEffect MODE_VIBRATION_EFFECT =
+    private static final VibrationEffect DOUBLE_CLICK_EFFECT =
             VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK);
+
+    // Supported modes for AlertSlider positions.
+    private final String MODE_NORMAL;
+    private final String MODE_PRIORITY;
+    private final String MODE_VIBRATE;
+    private final String MODE_SILENT;
+    private final String MODE_DND;
 
     private final Context mContext;
     private final ContentResolver mResolver;
     private final AudioManager mAudioManager;
+    private final NotificationManager mNotificationManager;
     private final PowerManager mPowerManager;
     private final EventHandler mHandler;
     private final Vibrator mVibrator;
@@ -108,11 +120,18 @@ public class KeyHandler implements DeviceKeyHandler {
         mHandler = new EventHandler();
 
         mAudioManager = mContext.getSystemService(AudioManager.class);
+        mNotificationManager = mContext.getSystemService(NotificationManager.class);
         mPowerManager = mContext.getSystemService(PowerManager.class);
         mVibrator = mContext.getSystemService(Vibrator.class);
 
         mSettingMap = new SparseArray<>();
         mapScanCode();
+
+        MODE_NORMAL = mContext.getString(R.string.alert_slider_mode_normal);
+        MODE_PRIORITY = mContext.getString(R.string.alert_slider_mode_priority);
+        MODE_VIBRATE = mContext.getString(R.string.alert_slider_mode_vibrate);
+        MODE_SILENT = mContext.getString(R.string.alert_slider_mode_silent);
+        MODE_DND = mContext.getString(R.string.alert_slider_mode_dnd);
     }
 
     @Override
@@ -122,22 +141,21 @@ public class KeyHandler implements DeviceKeyHandler {
 
         // Handle AlertSlider KeyEvent
         if (eventAction == KeyEvent.ACTION_DOWN) {
+            String mode = null;
             switch (scanCode) {
-                case MODE_NORMAL:
-                    mAudioManager.setRingerModeInternal(RINGER_MODE_NORMAL);
-                    doHapticFeedback(MODE_NORMAL_EFFECT);
+                case POSITION_BOTTOM:
+                    mode = performSliderAction(ALERTSLIDER_MODE_POSITION_BOTTOM, MODE_NORMAL);
                     break;
-                case MODE_VIBRATION:
-                    mAudioManager.setRingerModeInternal(RINGER_MODE_VIBRATE);
-                    doHapticFeedback(MODE_VIBRATION_EFFECT);
+                case POSITION_MIDDLE:
+                    mode = performSliderAction(ALERTSLIDER_MODE_POSITION_MIDDLE, MODE_VIBRATE);
                     break;
-                case MODE_SILENCE:
-                    mAudioManager.setRingerModeInternal(RINGER_MODE_SILENT);
+                case POSITION_TOP:
+                    mode = performSliderAction(ALERTSLIDER_MODE_POSITION_TOP, MODE_SILENT);
                     break;
                 default:
                     return false;
             }
-            sendSliderBroadcast(scanCode);
+            sendSliderBroadcast(scanCode, mode);
             return true;
         }
 
@@ -172,6 +190,33 @@ public class KeyHandler implements DeviceKeyHandler {
                 mSettingMap.put(gesture.keycode, Utils.getResName(gesture.name));
             }
         }
+    }
+
+    private String performSliderAction(String key, String defMode) {
+        String mode = Settings.System.getString(mResolver, key);
+        if (mode == null) {
+            mode = defMode;
+        }
+        if (mode.equals(MODE_NORMAL)) {
+            mAudioManager.setRingerModeInternal(RINGER_MODE_NORMAL);
+            mNotificationManager.setZenMode(ZEN_MODE_OFF, null, TAG);
+            doHapticFeedback(HEAVY_CLICK_EFFECT);
+        } else if (mode.equals(MODE_PRIORITY)) {
+            mAudioManager.setRingerModeInternal(RINGER_MODE_NORMAL);
+            mNotificationManager.setZenMode(ZEN_MODE_IMPORTANT_INTERRUPTIONS, null, TAG);
+            doHapticFeedback(HEAVY_CLICK_EFFECT);
+        } else if (mode.equals(MODE_VIBRATE)) {
+            mAudioManager.setRingerModeInternal(RINGER_MODE_VIBRATE);
+            mNotificationManager.setZenMode(ZEN_MODE_OFF, null, TAG);
+            doHapticFeedback(DOUBLE_CLICK_EFFECT);
+        } else if (mode.equals(MODE_SILENT)) {
+            mAudioManager.setRingerModeInternal(RINGER_MODE_SILENT);
+            mNotificationManager.setZenMode(ZEN_MODE_OFF, null, TAG);
+        } else if (mode.equals(MODE_DND)) {
+            mAudioManager.setRingerModeInternal(RINGER_MODE_NORMAL);
+            mNotificationManager.setZenMode(ZEN_MODE_NO_INTERRUPTIONS, null, TAG);
+        }
+        return mode;
     }
 
     private void launchCamera() {
@@ -228,7 +273,7 @@ public class KeyHandler implements DeviceKeyHandler {
     }
 
     private void launchDozePulse() {
-        final boolean dozeEnabled = Settings.Secure.getInt(mContext.getContentResolver(),
+        final boolean dozeEnabled = Settings.Secure.getInt(mResolver,
                 Settings.Secure.DOZE_ENABLED, 1) != 0;
         if (dozeEnabled) {
             mContext.sendBroadcastAsUser(new Intent(PULSE_ACTION), CURRENT);
@@ -267,7 +312,7 @@ public class KeyHandler implements DeviceKeyHandler {
             return;
         }
         if (mAudioManager.getRingerMode() != RINGER_MODE_SILENT) {
-            doHapticFeedback(MODE_NORMAL_EFFECT);
+            doHapticFeedback(HEAVY_CLICK_EFFECT);
         }
     }
 
@@ -277,9 +322,10 @@ public class KeyHandler implements DeviceKeyHandler {
         }
     }
 
-    private void sendSliderBroadcast(int code) {
+    private void sendSliderBroadcast(int code, String mode) {
         final Intent intent = new Intent(Intent.ACTION_SLIDER_POSITION_CHANGED);
-        intent.putExtra(Intent.EXTRA_SLIDER_POSITION, code - MODE_NORMAL);
+        intent.putExtra(Intent.EXTRA_SLIDER_POSITION, code - POSITION_BOTTOM);
+        intent.putExtra(Intent.EXTRA_SLIDER_MODE, mode);
         mContext.sendBroadcastAsUser(intent, SYSTEM);
     }
 
