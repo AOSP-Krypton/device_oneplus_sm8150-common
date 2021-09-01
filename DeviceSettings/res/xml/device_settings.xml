@@ -58,8 +58,8 @@
         android:title="@string/category_alert_slider">
 
         <ListPreference
-            android:key="alert_slider_bottom_preference"
-            android:title="@string/alert_slider_bottom_title"
+            android:key="alert_slider_top_preference"
+            android:title="@string/alert_slider_top_title"
             android:summary="%s"
             android:entries="@array/alert_slider_modes"
             android:persistent="false" />
@@ -72,10 +72,11 @@
             android:persistent="false" />
 
         <ListPreference
-            android:key="alert_slider_top_preference"
-            android:title="@string/alert_slider_top_title"
+            android:key="alert_slider_bottom_preference"
+            android:title="@string/alert_slider_bottom_title"
             android:summary="%s"
             android:entries="@array/alert_slider_modes"
             android:persistent="false" />
+     
     </PreferenceCategory>
 </PreferenceScreen>
