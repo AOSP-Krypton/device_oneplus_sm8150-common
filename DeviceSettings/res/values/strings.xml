@@ -18,12 +18,6 @@
     <!-- App Title -->
     <string name="device_settings_title">OnePlus Settings</string>
 
-    <!-- Refresh Rate -->
-    <string name="refresh_rate_settings_title">Screen Refresh Rate</string>
-    <string name="force_90_switch_title">Force 90 Hz globally</string>
-    <string name="force_60_summary">Current mode: 60 Hz</string>
-    <string name="force_90_summary">Current mode: 90 Hz</string>
-
     <string name="display_title">Display</string>
 
     <!-- Screen off Gestures : Input -->

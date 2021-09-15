@@ -15,17 +15,6 @@
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="@string/refresh_rate_settings_title"
-        android:key="refresh_rate_settings_group">
-
-        <SwitchPreference
-            android:key="force_90_preference"
-            android:title="@string/force_90_switch_title"
-            android:summaryOn="@string/force_90_summary"
-            android:summaryOff="@string/force_60_summary" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:key="graphics"
         android:title="@string/display_title">
 

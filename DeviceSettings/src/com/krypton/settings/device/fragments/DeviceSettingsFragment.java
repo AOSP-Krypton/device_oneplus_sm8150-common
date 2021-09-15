@@ -29,13 +29,11 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 
 import com.android.internal.R;
 
 public class DeviceSettingsFragment extends PreferenceFragmentCompat
         implements OnPreferenceChangeListener {
-    private static final String KEY_FORCE_90 = "force_90_preference";
     private static final String KEY_ALERT_SLIDER_BOTTOM = "alert_slider_bottom_preference";
     private static final String KEY_ALERT_SLIDER_MIDDLE = "alert_slider_middle_preference";
     private static final String KEY_ALERT_SLIDER_TOP = "alert_slider_top_preference";
@@ -45,7 +43,6 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle bundle, String key) {
         setPreferencesFromResource(com.krypton.settings.device.R.xml.device_settings, key);
         mContext = getContext();
-        findPreference(KEY_FORCE_90).setOnPreferenceChangeListener(this);
 
         final String[] entryValues = new String[] {
             mContext.getString(R.string.alert_slider_mode_normal),
@@ -78,9 +75,6 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         switch (preference.getKey()) {
-            case KEY_FORCE_90:
-                setRefreshRate(((Boolean) newValue) ? 90 : 60);
-                return true;
             case KEY_ALERT_SLIDER_BOTTOM:
                 return putString(ALERTSLIDER_MODE_POSITION_BOTTOM, newValue);
             case KEY_ALERT_SLIDER_MIDDLE:
@@ -90,12 +84,6 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat
             default:
                 return false;
         }
-    }
-
-    private void setRefreshRate(int rate) {
-        final ContentResolver contentResolver = mContext.getContentResolver();
-        Settings.System.putInt(contentResolver, Settings.System.PEAK_REFRESH_RATE, rate);
-        Settings.System.putInt(contentResolver, Settings.System.MIN_REFRESH_RATE, rate);
     }
 
     private boolean putString(String key, Object value) {
