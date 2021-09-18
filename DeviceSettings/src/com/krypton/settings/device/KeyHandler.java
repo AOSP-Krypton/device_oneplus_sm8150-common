@@ -46,23 +46,18 @@ import static com.android.internal.lineage.hardware.LineageHardwareManager.FEATU
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
-import android.os.FileObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.os.VibrationEffect;
@@ -81,12 +76,9 @@ import com.android.internal.util.krypton.KryptonUtils;
 
 import java.util.List;
 
-import vendor.oneplus.hardware.camera.V1_0.IOnePlusCameraProvider;
-
 @Keep
 public class KeyHandler implements DeviceKeyHandler {
     private static final String TAG = "KeyHandler";
-    private static final boolean DEBUG = true;
     private static final String PULSE_ACTION = "com.android.systemui.doze.pulse";
     private static final String GESTURE_WAKEUP_REASON = "touchscreen-gesture-wakeup";
     private static final int GESTURE_REQUEST = 1;
@@ -122,27 +114,6 @@ public class KeyHandler implements DeviceKeyHandler {
     private final SparseArray<String> mSettingMap;
     private KeyguardManager mKeyguardManager;
 
-    // OP cam specials
-    public static final String CLIENT_PACKAGE_NAME = "com.oneplus.camera";
-    public static final String CLIENT_PACKAGE_PATH = "/data/misc/aosp/client_package_name";
-    private boolean mDispOn;
-    private ClientPackageNameObserver mClientObserver;
-    private IOnePlusCameraProvider mProvider;
-    private boolean isOPCameraAvail;
-
-    private BroadcastReceiver mSystemStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                mDispOn = true;
-                onDisplayOn();
-            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                mDispOn = false;
-                onDisplayOff();
-            }
-        }
-    };
-
     public KeyHandler(Context context) {
         mContext = context;
         mResolver = mContext.getContentResolver();
@@ -161,16 +132,6 @@ public class KeyHandler implements DeviceKeyHandler {
         MODE_VIBRATE = mContext.getString(R.string.alert_slider_mode_vibrate);
         MODE_SILENT = mContext.getString(R.string.alert_slider_mode_silent);
         MODE_DND = mContext.getString(R.string.alert_slider_mode_dnd);
-
-        IntentFilter systemStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        systemStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        mContext.registerReceiver(mSystemStateReceiver, systemStateFilter);
-
-        isOPCameraAvail = Utils.isAvailableApp("com.oneplus.camera", context);
-        if (isOPCameraAvail) {
-            mClientObserver = new ClientPackageNameObserver(CLIENT_PACKAGE_PATH);
-            mClientObserver.startWatching();
-        }
     }
 
     @Override
@@ -358,43 +319,6 @@ public class KeyHandler implements DeviceKeyHandler {
     private void doHapticFeedback(VibrationEffect effect) {
         if (mVibrator != null && mVibrator.hasVibrator()) {
             mVibrator.vibrate(effect);
-        }
-    }
-
-        private void onDisplayOff() {
-        if (DEBUG) Log.i(TAG, "Display off");
-        if (mClientObserver != null) {
-            mClientObserver.stopWatching();
-            mClientObserver = null;
-        }
-    }
-
-    private void onDisplayOn() {
-        if (DEBUG) Log.i(TAG, "Display on");
-        if ((mClientObserver == null) && (isOPCameraAvail)) {
-            mClientObserver = new ClientPackageNameObserver(CLIENT_PACKAGE_PATH);
-            mClientObserver.startWatching();
-        }
-    }
-
-    private class ClientPackageNameObserver extends FileObserver {
-
-        public ClientPackageNameObserver(String file) {
-            super(CLIENT_PACKAGE_PATH, MODIFY);
-        }
-
-        @Override
-        public void onEvent(int event, String file) {
-            String pkgName = Utils.getFileValue(CLIENT_PACKAGE_PATH, "0");
-            if (event == FileObserver.MODIFY) {
-                try {
-                    Log.d(TAG, "client_package" + file + " and " + pkgName);
-                    mProvider = IOnePlusCameraProvider.getService();
-                    mProvider.setPackageName(pkgName);
-                } catch (RemoteException e) {
-                    Log.e(TAG, "setPackageName error", e);
-                }
-            }
         }
     }
 

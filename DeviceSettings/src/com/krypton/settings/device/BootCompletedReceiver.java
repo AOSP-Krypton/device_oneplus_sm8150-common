@@ -23,6 +23,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.UserHandle;
 import android.provider.Settings;
 
 import androidx.annotation.Keep;
@@ -44,5 +45,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
                 mHardwareManager.setTouchscreenGestureEnabled(gesture, action > 0);
             }
         }
+        context.startServiceAsUser(new Intent(context, ClientPackageObserverService.class), UserHandle.SYSTEM);
     }
 }

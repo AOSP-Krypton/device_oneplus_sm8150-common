@@ -35,6 +35,7 @@
     <application
         android:title="@string/device_settings_title"
         android:theme="@style/DeviceSettingsTheme"
+        android:persistent="true"
         android:supportsRtl="true"
         android:directBootAware="true">
 
@@ -56,5 +57,8 @@
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".ClientPackageObserverService"
+            android:exported="false" />
     </application>
 </manifest>
