@@ -243,10 +243,8 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.1-service.oneplus_msmnile \
-    vendor.lineage.biometrics.fingerprint.inscreen@1.0-service.oneplus_msmnile \
-    vendor.oneplus.fingerprint.extension@1.0.vendor \
-    vendor.oneplus.hardware.display@1.0.vendor
+    android.hardware.biometrics.fingerprint@2.1-service.oneplus \
+    vendor.lineage.biometrics.fingerprint.inscreen@1.0-service.oneplus
 
 # GPS
 PRODUCT_COPY_FILES += \
@@ -350,10 +348,10 @@ PRODUCT_PACKAGES += \
 
 # OnePlus
 PRODUCT_PACKAGES += \
-    oneplus-fwk.oneplus_msmnile
+    oneplus-fwk
 
 PRODUCT_BOOT_JARS += \
-    oneplus-fwk.oneplus_msmnile
+    oneplus-fwk
 
 # Power
 PRODUCT_PACKAGES += \
@@ -383,7 +381,7 @@ PRODUCT_PACKAGES += \
 
 # Vibrator
 PRODUCT_PACKAGES += \
-    vendor.qti.hardware.vibrator.service.oneplus_msmnile
+    vendor.qti.hardware.vibrator.service.oneplus
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -398,7 +396,7 @@ PRODUCT_PACKAGES += \
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
-    device/oneplus/common
+    hardware/oneplus
 
 # Telephony
 PRODUCT_PACKAGES += \
@@ -419,11 +417,11 @@ PRODUCT_COPY_FILES += \
 
 # Touch
 PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.oneplus_msmnile
+    vendor.lineage.touch@1.0-service.oneplus
 
 # tri-state key
 PRODUCT_PACKAGES += \
-    tri-state-key_daemon
+    tri-state-key_daemon.vendor
 
 # Update engine
 PRODUCT_PACKAGES += \
