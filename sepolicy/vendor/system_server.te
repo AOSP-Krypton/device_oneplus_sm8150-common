@@ -5,3 +5,5 @@ allow system_server { proc_sensor proc_ultrasound proc_touchpanel }:dir search;
 
 allow system_server hal_cameraHIDL_hwservice:hwservice_manager { find };
 binder_call(system_server, hal_cameraHIDL_default)
+
+get_prop(system_server, vendor_camera_prop)
