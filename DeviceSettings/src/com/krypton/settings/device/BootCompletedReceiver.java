@@ -36,15 +36,22 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        final ContentResolver resolver = context.getContentResolver();
-        LineageHardwareManager mHardwareManager = LineageHardwareManager.getInstance(context);
-        VibratorStrengthPreference.restore(context);
-        if (mHardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
-            for (TouchscreenGesture gesture: mHardwareManager.getTouchscreenGestures()) {
-                int action = Settings.System.getInt(resolver, Utils.getResName(gesture.name), 0);
-                mHardwareManager.setTouchscreenGestureEnabled(gesture, action > 0);
+        final String action = intent.getAction();
+        if (action == null) {
+            return;
+        } else if (action.equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
+            final ContentResolver resolver = context.getContentResolver();
+            LineageHardwareManager mHardwareManager = LineageHardwareManager.getInstance(context);
+            VibratorStrengthPreference.restore(context);
+            if (mHardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
+                for (TouchscreenGesture gesture: mHardwareManager.getTouchscreenGestures()) {
+                    final int actionForGesture = Settings.System.getInt(
+                        resolver, Utils.getResName(gesture.name), 0);
+                    mHardwareManager.setTouchscreenGestureEnabled(gesture, actionForGesture > 0);
+                }
             }
+        } else if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            context.startServiceAsUser(new Intent(context, ClientPackageObserverService.class), UserHandle.SYSTEM);
         }
-        context.startServiceAsUser(new Intent(context, ClientPackageObserverService.class), UserHandle.SYSTEM);
     }
 }

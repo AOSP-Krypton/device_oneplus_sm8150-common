@@ -68,17 +68,7 @@ public class ClientPackageObserverService extends Service {
     private final FileObserver mFileObserver = new FileObserver(new File(CLIENT_PACKAGE_PATH)) {
         @Override
         public void onEvent(int event, String file) {
-            String pkgName = FileUtils.readOneLine(file);
-            pkgName = pkgName == null ? "0" : pkgName;
-            try {
-                logD("event = " + event + " client_package " + file + " and " + pkgName);
-                if (mProvider == null) {
-                    mProvider = IOnePlusCameraProvider.getService();
-                }
-                mProvider.setPackageName(pkgName);
-            } catch (RemoteException e) {
-                Log.e(TAG, "Error communicating with IOnePlusCameraProvider", e);
-            }
+            setPackageName(file);
         }
     };
 
@@ -88,6 +78,9 @@ public class ClientPackageObserverService extends Service {
         mIsOpCameraInstalledAndActive = KryptonUtils.isPackageInstalled(this,
             CLIENT_PACKAGE_NAME, false /** ignore state */);
         logD("mIsOpCameraInstalledAndActive = " + mIsOpCameraInstalledAndActive);
+        if (mIsOpCameraInstalledAndActive) {
+            setPackageName(CLIENT_PACKAGE_PATH);
+        }
         final IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SCREEN_OFF);
         filter.addAction(ACTION_SCREEN_ON);
@@ -127,6 +120,20 @@ public class ClientPackageObserverService extends Service {
             logD("unregistering client observer");
             mFileObserver.stopWatching();
             mIsClientObserverRegistered = false;
+        }
+    }
+
+    private void setPackageName(String file) {
+        String pkgName = FileUtils.readOneLine(file);
+        pkgName = pkgName == null ? CLIENT_PACKAGE_NAME : pkgName;
+        try {
+            logD(" client_package " + file + " and pkg = " + pkgName);
+            if (mProvider == null) {
+                mProvider = IOnePlusCameraProvider.getService();
+            }
+            mProvider.setPackageName(pkgName);
+        } catch (RemoteException e) {
+            Log.e(TAG, "Error communicating with IOnePlusCameraProvider", e);
         }
     }
 

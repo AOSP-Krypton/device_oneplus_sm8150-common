@@ -10,3 +10,6 @@ allow priv_app vendor_xdsp_device:chr_file r_file_perms;
 allow priv_app adsprpcd_file:dir r_dir_perms;
 
 binder_call(priv_app, hal_ifaa_default)
+
+allow priv_app hal_cameraHIDL_hwservice:hwservice_manager find;
+binder_call(priv_app, hal_cameraHIDL_default)
