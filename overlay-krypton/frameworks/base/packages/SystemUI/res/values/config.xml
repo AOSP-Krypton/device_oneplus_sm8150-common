@@ -26,4 +26,13 @@
 
     <!-- Offset for alert slider dialog from status bar -->
     <integer name="config_alertSliderOffset">800</integer>
+
+     <!-- Color of the UDFPS Pressed view -->
+    <color name="config_udfpsColor">#ffffe6</color>
+
+    <!-- HBM type of UDFPS overlay.
+            0 - GLOBAL HBM 
+            1 - LOCAL HBM
+    -->
+    <integer name="config_udfps_hbm_type">0</integer>
 </resources>
