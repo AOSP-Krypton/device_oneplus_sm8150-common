@@ -421,6 +421,9 @@ PRODUCT_PACKAGES += \
 # VNDK
 include $(LOCAL_PATH)/interfaces-vndk.mk
 
+# VNDK
+PRODUCT_EXTRA_VNDK_VERSIONS := 30
+
 # Wifi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service \
