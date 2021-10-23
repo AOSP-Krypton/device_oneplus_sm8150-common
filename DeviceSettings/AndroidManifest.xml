@@ -27,10 +27,11 @@
 
     <protected-broadcast android:name="android.intent.action.SLIDER_POSITION_CHANGED" />
     <protected-broadcast android:name="android.intent.action.SCREEN_CAMERA_GESTURE" />
+    <protected-broadcast android:name="com.android.systemui.doze.pulse" />
 
     <uses-sdk
         android:minSdkVersion="30"
-        android:targetSdkVersion="30" />
+        android:targetSdkVersion="31" />
 
     <application
         android:title="@string/device_settings_title"
@@ -42,24 +43,29 @@
         <!-- Device Settings -->
         <activity
             android:name=".DeviceSettingsActivity"
-            android:label="@string/device_settings_title">
+            android:label="@string/device_settings_title"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
+                <action android:name="com.krypton.settings.action.DEVICE_SETTINGS" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".TouchscreenGestureSettingsActivity"
-            android:label="@string/touchscreen_gesture_settings_title" />
+            android:label="@string/touchscreen_gesture_settings_title"
+            android:exported="false" />
 
-        <receiver android:name=".BootCompletedReceiver">
+        <receiver
+            android:name=".BootCompletedReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".ClientPackageObserverService"
+        <service
+            android:name=".ClientPackageObserverService"
             android:exported="false" />
     </application>
 </manifest>
