@@ -24,9 +24,6 @@
     <!-- Whether device has hardware alert slider -->
     <bool name="config_hasAlertSlider">true</bool>
 
-    <!-- Offset for alert slider dialog from status bar -->
-    <integer name="config_alertSliderOffset">800</integer>
-
     <!-- HBM type of UDFPS overlay.
             0 - GLOBAL HBM 
             1 - LOCAL HBM
