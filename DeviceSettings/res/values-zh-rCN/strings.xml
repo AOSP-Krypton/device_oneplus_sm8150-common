@@ -21,10 +21,10 @@
     <string name="display_title">显示</string>
 
     <!-- Screen off Gestures : Input -->
-    <string name="touchscreen_gesture_settings_title">触摸屏手势</string>
-    <string name="touchscreen_gesture_settings_summary">使用触摸屏手势来实现快捷操作</string>
+    <string name="touchscreen_gesture_settings_title">息屏手势</string>
+    <string name="touchscreen_gesture_settings_summary">使用息屏手势来实现快捷操作</string>
     <string name="touchscreen_gesture_haptic_feedback_title">触摸反馈</string>
-    <string name="touchscreen_gesture_haptic_feedback_summary">检测到触摸屏手势后震动</string>
+    <string name="touchscreen_gesture_haptic_feedback_summary">检测到息屏手势后震动</string>
     <string name="touchscreen_gesture_single_tap_title">单击</string>
     <string name="touchscreen_gesture_two_fingers_down_swipe_title">双指下滑</string>
     <string name="touchscreen_gesture_up_arrow_title">绘制一个 \"Λ\"</string>
