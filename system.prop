@@ -1,3 +1,5 @@
+ro.apk_verity.mode=2
+
 # Audio
 persist.vendor.audio.hac.enable=false
 ro.audio.monitorRotation=true
