@@ -342,6 +342,9 @@ PRODUCT_PACKAGES += \
     libstagefrighthw \
     libstagefright_softomx.vendor
 
+# Oneplus cam
+TARGET_SHIPS_OOSCAM := false
+
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power-service-qti \
