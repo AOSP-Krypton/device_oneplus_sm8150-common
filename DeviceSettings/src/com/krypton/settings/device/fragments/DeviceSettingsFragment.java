@@ -23,6 +23,7 @@ import static android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_TOP;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.provider.Settings;
 
 import androidx.preference.ListPreference;
@@ -37,6 +38,11 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat
     private static final String KEY_ALERT_SLIDER_BOTTOM = "alert_slider_bottom_preference";
     private static final String KEY_ALERT_SLIDER_MIDDLE = "alert_slider_middle_preference";
     private static final String KEY_ALERT_SLIDER_TOP = "alert_slider_top_preference";
+
+    private static final String KEY_VIBRATOR_CATEGORY = "vibrator";
+    private static final String PROP_KRYPTON_DEVICE = "ro.krypton.build.device";
+    private static final String GUACAMOLEB = "guacamoleb";
+
     private Context mContext;
 
     @Override
@@ -70,6 +76,10 @@ public class DeviceSettingsFragment extends PreferenceFragmentCompat
         value = Settings.System.getString(contentResolver, ALERTSLIDER_MODE_POSITION_TOP);
         alertSliderTopPref.setValue(value != null ? value : entryValues[3]);
         alertSliderTopPref.setOnPreferenceChangeListener(this);
+
+        final String device = SystemProperties.get(PROP_KRYPTON_DEVICE, "");
+        if (device.equals(GUACAMOLEB))
+            getPreferenceScreen().removePreferenceRecursively(KEY_VIBRATOR_CATEGORY);
     }
 
     @Override
