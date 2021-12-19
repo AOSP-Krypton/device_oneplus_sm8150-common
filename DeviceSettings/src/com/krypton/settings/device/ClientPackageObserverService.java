@@ -80,6 +80,8 @@ public class ClientPackageObserverService extends Service {
         logD("mIsOpCameraInstalledAndActive = " + mIsOpCameraInstalledAndActive);
         if (mIsOpCameraInstalledAndActive) {
             setPackageName(CLIENT_PACKAGE_PATH);
+        } else {
+            stopSelf();
         }
         final IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SCREEN_OFF);

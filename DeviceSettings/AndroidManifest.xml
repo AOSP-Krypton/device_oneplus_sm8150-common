@@ -36,7 +36,6 @@
     <application
         android:title="@string/device_settings_title"
         android:theme="@style/DeviceSettingsTheme"
-        android:persistent="true"
         android:supportsRtl="true"
         android:directBootAware="true">
 
