@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.krypton.settings.device;
+package com.krypton.settings.device
 
-public class Utils {
-    private static final String TOUCHSCREEN_GESTURE_FORMAT = "touchscreen_gesture_%s_title";
+class Utils {
+    companion object {
+        private const val TOUCHSCREEN_GESTURE_FORMAT = ""
 
-    public static String getResName(String name) {
-        return String.format(TOUCHSCREEN_GESTURE_FORMAT, name.toLowerCase().replace(" ", "_"));
+        fun getResName(name: String) = "touchscreen_gesture_${name.toLowerCase().replace(" ", "_")}_title"
     }
 }

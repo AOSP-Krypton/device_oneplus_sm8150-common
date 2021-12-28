@@ -13,37 +13,37 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <PreferenceCategory
-        android:key="graphics"
         android:title="@string/display_title">
 
         <Preference
             android:key="touchscreen_gesture_category"
             android:title="@string/touchscreen_gesture_settings_title"
             android:summary="@string/touchscreen_gesture_settings_summary"
-            android:persistent="false">
-            <intent android:targetPackage="com.krypton.settings.device"
-                    android:targetClass="com.krypton.settings.device.TouchscreenGestureSettingsActivity" />
-        </Preference>
+            android:persistent="false"
+            android:fragment="com.krypton.settings.device.fragments.GestureSettingsFragment" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="vibrator"
         android:title="@string/category_vibrator">
 
-        <com.krypton.settings.device.VibratorStrengthPreference
-            android:key="vib_strength"
-            android:title="@string/vib_strength_title_head"
-            android:summary="@string/vib_strength_summary_head" />
-        <Preference
-            android:icon="@drawable/ic_info_outline_24dp"
-            android:persistent="false"
-            android:summary="@string/vibration_warning" />
+        <com.krypton.settings.preference.SystemSettingSeekBarPreference
+            android:key="device_setting_vib_strength"
+            android:summary="@string/vib_strength_summary_head"
+            android:max="10"
+            android:defaultValue="2"
+            app:min="0" />
+
+        <com.android.settingslib.widget.FooterPreference
+            android:title="@string/vibration_warning"
+            android:selectable="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="alert_slider"
         android:title="@string/category_alert_slider">
 
         <ListPreference

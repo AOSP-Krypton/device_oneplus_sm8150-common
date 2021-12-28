@@ -8,13 +8,17 @@ android_app {
     ],
     static_libs: [
         "androidx-constraintlayout_constraintlayout",
+        "androidx.core_core-ktx",
+        "androidx.preference_preference",
+        "androidx.fragment_fragment-ktx",
         "vendor.oneplus.hardware.camera-V1.0-java",
+        "PreferenceExtensions",
     ],
     required: [
         "privapp_whitelist_com.krypton.settings.device",
     ],
     srcs: [
-        "src/**/*.java",
+        "src/**/*.kt",
     ],
     resource_dirs: [
         "res",

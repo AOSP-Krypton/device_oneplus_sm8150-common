@@ -55,7 +55,6 @@
 
     <!-- Vibration-->
     <string name="category_vibrator">震动</string>
-    <string name="vib_strength_title_head">强度</string>
     <string name="vib_strength_summary_head">自定义震动强度</string>
     <string name="vibration_warning">震动强度过高可能会导致永久性硬件损伤</string>
 

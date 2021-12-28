@@ -55,7 +55,6 @@
 
     <!-- Vibration-->
     <string name="category_vibrator">Vibrador</string>
-    <string name="vib_strength_title_head">Força</string>
     <string name="vib_strength_summary_head">Definir a força do vibrador</string>
     <string name="vibration_warning">Um ajuste de força muito alto pode causar danos permanentes ao hardware</string>
 
