@@ -32,21 +32,21 @@ import android.view.WindowManager;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FallSensor implements SensorEventListener {
-    private static final boolean DEBUG = true;
-    private static final String TAG = "FallSensor";
+class FallSensor: SensorEventListener {
+    companion object {
+        private const val DEBUG = true;
+        private const val TAG = "FallSensor";
+    }
 
-    private ExecutorService mExecutorService;
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private Context mContext;
+    private mExecutorService: ExecutorService;
+    private mSensorManager: SensorManager;
+    private mSensor: Sensor;
 
-    public FallSensor(Context context) {
-        mContext = context;
-        mSensorManager = mContext.getSystemService(SensorManager.class);
+    constructor(context: Context) {
+        mSensorManager = context.getSystemService(SensorManager.class);
         mExecutorService = Executors.newSingleThreadExecutor();
 
-        for (Sensor sensor : mSensorManager.getSensorList(Sensor.TYPE_ALL)) {
+        for ( sensor : Sensor in mSensorManager.getSensorList(Sensor.TYPE_ALL)) {
             if (DEBUG) Log.d(TAG, "Sensor type: " + sensor.getStringType());
             if (TextUtils.equals(sensor.getStringType(), "oneplus.sensor.free_fall")) {
                 if (DEBUG) Log.d(TAG, "Found fall sensor");
@@ -56,8 +56,7 @@ public class FallSensor implements SensorEventListener {
         }
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
+    override fun onSensorChanged(event: SensorEvent) {
         if (event.values[0] <= 0) {
             return;
         }
@@ -74,45 +73,44 @@ public class FallSensor implements SensorEventListener {
         CameraMotorController.setMotorEnabled();
 
         // Show alert dialog informing user that we closed the camera
-        new Handler(Looper.getMainLooper()).post(() -> {
-            AlertDialog alertDialog = new AlertDialog.Builder(mContext)
+        Handler(Looper.getMainLooper()).post({ -> {
+            AlertDialog alertDialog = AlertDialog.Builder(context)
                     .setTitle(R.string.free_fall_detected_title)
                     .setMessage(R.string.free_fall_detected_message)
-                    .setNegativeButton(R.string.raise_the_camera, (dialog, which) -> {
+                    .setNegativeButton(R.string.raise_the_camera, {_, _ -> {
                         // Reopen the camera
                         CameraMotorController.setMotorDirection(CameraMotorController.DIRECTION_UP);
                         CameraMotorController.setMotorEnabled();
-                    })
-                    .setPositiveButton(R.string.close, (dialog, which) -> {
+                    }})
+                    .setPositiveButton(R.string.close, {_, _ -> {
                         // Go back to home screen
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        val intent: Intent = Intent(Intent.ACTION_MAIN);
                         intent.addCategory(Intent.CATEGORY_HOME);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity(intent);
-                    })
+                        context.startActivity(intent);
+                    }})
                     .create();
             alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.show();
-        });
+        }});
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
         /* Empty */
     }
 
-    void enable() {
+    fun enable() {
         if (DEBUG) Log.d(TAG, "Enabling");
-        mExecutorService.submit(() -> {
+        mExecutorService.submit({ -> {
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        });
+        }});
     }
 
-    void disable() {
+    fun disable() {
         if (DEBUG) Log.d(TAG, "Disabling");
-        mExecutorService.submit(() -> {
+        mExecutorService.submit({ -> {
             mSensorManager.unregisterListener(this, mSensor);
-        });
+        }});
     }
 }
