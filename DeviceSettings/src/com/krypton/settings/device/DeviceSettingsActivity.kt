@@ -19,29 +19,21 @@ package com.krypton.settings.device
 import android.os.Bundle
 import android.view.MenuItem
 
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 
 import com.krypton.settings.device.fragments.DeviceSettingsFragment
+import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
+import com.android.settingslib.collapsingtoolbar.R
 
-class DeviceSettingsActivity: FragmentActivity() {
+class DeviceSettingsActivity: CollapsingToolbarBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                replace(android.R.id.content, DeviceSettingsFragment(), null)
+                replace(R.id.content_frame, DeviceSettingsFragment(), null)
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

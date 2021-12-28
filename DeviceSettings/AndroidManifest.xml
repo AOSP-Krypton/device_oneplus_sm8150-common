@@ -35,7 +35,7 @@
 
     <application
         android:title="@string/device_settings_title"
-        android:theme="@style/DeviceSettingsTheme"
+        android:theme="@style/Theme.SubSettingsBase"
         android:supportsRtl="true"
         android:directBootAware="true">
 
