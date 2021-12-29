@@ -79,6 +79,8 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
         val device: String = SystemProperties.get(PROP_KRYPTON_DEVICE, "")
         if (device == GUACAMOLEB)
             preferenceScreen.removePreferenceRecursively(KEY_VIBRATOR_CATEGORY)
+        if(device == GUACAMOLEB || device == HOTDOGB)
+            preferenceScreen.removePreferenceRecursively(KEY_CAMERA_CATEGORY)
 
         findPreference<CustomSeekBarPreference>(KEY_VIBRATOR_PREFERENCE)
             ?.setOnPreferenceChangeListener { _, newValue ->
@@ -94,6 +96,8 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
             KEY_ALERT_SLIDER_MIDDLE -> putString(ALERTSLIDER_MODE_POSITION_MIDDLE, newValue)
             KEY_ALERT_SLIDER_TOP -> putString(ALERTSLIDER_MODE_POSITION_TOP, newValue)
             KEY_MUTE_MEDIA_WITH_SILENT -> putInt(KEY_MUTE_MEDIA_WITH_SILENT, 
+                if(newValue as Boolean) 1 else 0)
+            KEY_ALWAYS_CAMERA_DIALOG -> putInt(KEY_ALWAYS_CAMERA_DIALOG, 
                 if(newValue as Boolean) 1 else 0)
             else -> false
         }
@@ -112,6 +116,7 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
         private const val KEY_VIBRATOR_CATEGORY = "vibrator"
         private const val PROP_KRYPTON_DEVICE = "ro.krypton.build.device"
         private const val GUACAMOLEB = "guacamoleb"
+        private const val HOTDOGB = "hotdogb"
 
         private const val KEY_VIBRATOR_PREFERENCE = "device_setting_vib_strength"
         private const val FILE_LEVEL = "/sys/devices/platform/soc/89c000.i2c/i2c-2/2-005a/leds/vibrator/level"
@@ -120,5 +125,7 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
         private val HEAVY_CLICK_EFFECT = VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
     
         private const val KEY_MUTE_MEDIA_WITH_SILENT = "config_mute_media"
+        private const val KEY_CAMERA_CATEGORY = "camera";
+        const val KEY_ALWAYS_CAMERA_DIALOG = "device_setting_always_on_camera_dialog";
     }
 }
