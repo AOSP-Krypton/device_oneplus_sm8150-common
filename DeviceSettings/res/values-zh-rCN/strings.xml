@@ -68,4 +68,13 @@
     <string name="mode_vibrate">震动</string>
     <string name="mode_silent">静音</string>
     <string name="mode_dnd">绝对静音</string>
+    <string name="alert_slider_mute_media_title">媒体静音</string>
+    <string name="alert_slider_mute_media_summary">切换到静音时也将静音媒体</string>
+
+    <!-- Pop-up camera-->
+    <string name="camera_title">相机</string>
+    <string name="always_on_camera_dialog_title">前置摄像头开启时询问</string>
+    <string name="always_on_camera_dialog_summary_on">每次开启都询问</string>
+    <string name="always_on_camera_dialog_summary_off">只在屏幕关闭时询问</string>
+
 </resources>
