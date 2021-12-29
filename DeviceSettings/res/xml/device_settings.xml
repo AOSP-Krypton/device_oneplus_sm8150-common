@@ -28,22 +28,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="vibrator"
-        android:title="@string/category_vibrator">
-
-        <com.krypton.settings.preference.SystemSettingSeekBarPreference
-            android:key="device_setting_vib_strength"
-            android:summary="@string/vib_strength_summary_head"
-            android:max="10"
-            android:defaultValue="2"
-            app:min="0" />
-
-        <com.android.settingslib.widget.FooterPreference
-            android:title="@string/vibration_warning"
-            android:selectable="false" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:title="@string/category_alert_slider">
 
         <ListPreference
@@ -84,6 +68,22 @@
             android:summaryOff="@string/always_on_camera_dialog_summary_off"
             android:summaryOn="@string/always_on_camera_dialog_summary_on"
             android:persistent="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="vibrator"
+        android:title="@string/category_vibrator">
+
+        <com.krypton.settings.preference.SystemSettingSeekBarPreference
+            android:key="device_setting_vib_strength"
+            android:summary="@string/vib_strength_summary_head"
+            android:max="10"
+            android:defaultValue="2"
+            app:min="0" />
+
+        <com.android.settingslib.widget.FooterPreference
+            android:title="@string/vibration_warning"
+            android:selectable="false" />
     </PreferenceCategory>
     
 </PreferenceScreen>
