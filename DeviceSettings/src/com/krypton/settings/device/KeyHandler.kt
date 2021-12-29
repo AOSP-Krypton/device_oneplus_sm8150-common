@@ -22,11 +22,14 @@ import android.Manifest.permission.STATUS_BAR_SERVICE
 import android.app.KeyguardManager
 import android.app.NotificationManager
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.media.AudioSystem
 import android.media.session.MediaSessionLegacyHelper
 import android.net.Uri
 import android.os.Handler
@@ -77,6 +80,17 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
     private val settingMap = SparseArray<String>()
     private var keyguardManager: KeyguardManager? = null
 
+    private var wasMuted = false
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val stream = intent.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_TYPE, -1)
+            val state = intent.getBooleanExtra(AudioManager.EXTRA_STREAM_VOLUME_MUTED, false)
+            if (stream == AudioSystem.STREAM_MUSIC && state == false) {
+                wasMuted = false
+            }
+        }
+    }
+
     init {
         val manager = LineageHardwareManager.getInstance(context)
         if (manager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
@@ -84,6 +98,10 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
                 settingMap.put(gesture.keycode, Utils.Companion.getResName(gesture.name))
             }
         }
+        context.registerReceiver(
+            broadcastReceiver,
+            IntentFilter(AudioManager.STREAM_MUTE_CHANGED_ACTION)
+        )
     }
 
     override fun handleKeyEvent(event: KeyEvent): Boolean {
@@ -128,25 +146,40 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
 
     private fun performSliderAction(key: String, defMode: String): String {
         val mode = Settings.System.getString(context.contentResolver, key) ?: defMode
+        val muteMedia = Settings.System.getInt(context.contentResolver, 
+            MUTE_MEDIA_WITH_SILENT, 0) == 1
         when (mode) {
             MODE_NORMAL -> {
                 audioManager.setRingerModeInternal(AudioManager.RINGER_MODE_NORMAL)
                 notificationManager.setZenMode(ZEN_MODE_OFF, null, TAG)
                 doHapticFeedback(HEAVY_CLICK_EFFECT)
+                if (muteMedia && wasMuted) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, 0)
+                }
             }
             MODE_PRIORITY -> {
                 audioManager.setRingerModeInternal(AudioManager.RINGER_MODE_NORMAL)
                 notificationManager.setZenMode(ZEN_MODE_IMPORTANT_INTERRUPTIONS, null, TAG)
                 doHapticFeedback(HEAVY_CLICK_EFFECT)
+                if (muteMedia && wasMuted) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, 0)
+                }
             }
             MODE_VIBRATE -> {
                 audioManager.setRingerModeInternal(AudioManager.RINGER_MODE_VIBRATE)
                 notificationManager.setZenMode(ZEN_MODE_OFF, null, TAG)
                 doHapticFeedback(DOUBLE_CLICK_EFFECT)
+                if (muteMedia && wasMuted) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, 0)
+                }
             }
             MODE_SILENT -> {
                 audioManager.setRingerModeInternal(AudioManager.RINGER_MODE_SILENT)
                 notificationManager.setZenMode(ZEN_MODE_OFF, null, TAG)
+                if (muteMedia) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_MUTE, 0)
+                    wasMuted = true
+                }
             }
             MODE_DND -> {
                 audioManager.setRingerModeInternal(AudioManager.RINGER_MODE_NORMAL)
@@ -337,5 +370,6 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
         private const val ACTION_VOLUME_UP = 11
         private const val ACTION_WAKEUP = 12
         private const val ACTION_AMBIENT_DISPLAY = 13
+        private const val MUTE_MEDIA_WITH_SILENT = "config_mute_media"
     }
 }

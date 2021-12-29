@@ -68,4 +68,6 @@
     <string name="mode_vibrate">Vibrate</string>
     <string name="mode_silent">Silent</string>
     <string name="mode_dnd">Total Silence</string>
+    <string name="alert_slider_mute_media_title">Mute media</string>
+    <string name="alert_slider_mute_media_summary">Mute media when switching to silent</string>
 </resources>
