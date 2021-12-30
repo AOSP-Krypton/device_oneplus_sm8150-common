@@ -20,6 +20,8 @@
 
     <string name="display_title">显示</string>
 
+    <string name="gesture_title">手势</string>
+
     <!-- Screen off Gestures : Input -->
     <string name="touchscreen_gesture_settings_title">息屏手势</string>
     <string name="touchscreen_gesture_settings_summary">使用息屏手势来实现快捷操作</string>
