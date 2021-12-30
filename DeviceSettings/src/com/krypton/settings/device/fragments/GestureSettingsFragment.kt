@@ -47,12 +47,6 @@ class GestureSettingsFragment: PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.touchscreen_gesture_settings, rootKey)
-        preferenceScreen.findPreference<Preference>(TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK)?.also {
-            it.setOnPreferenceChangeListener { _, newValue ->
-                Settings.System.putInt(context?.contentResolver, TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK,
-                    if (newValue as Boolean) 1 else 0)
-            }
-        }
         if (hardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
             hardwareManager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
                 val listPreference = ListPreference(context).apply {

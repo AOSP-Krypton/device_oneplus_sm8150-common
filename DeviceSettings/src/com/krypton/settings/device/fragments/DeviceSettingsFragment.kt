@@ -95,15 +95,8 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
             KEY_ALERT_SLIDER_BOTTOM -> putString(ALERTSLIDER_MODE_POSITION_BOTTOM, newValue)
             KEY_ALERT_SLIDER_MIDDLE -> putString(ALERTSLIDER_MODE_POSITION_MIDDLE, newValue)
             KEY_ALERT_SLIDER_TOP -> putString(ALERTSLIDER_MODE_POSITION_TOP, newValue)
-            KEY_MUTE_MEDIA_WITH_SILENT -> putInt(KEY_MUTE_MEDIA_WITH_SILENT, 
-                if(newValue as Boolean) 1 else 0)
-            KEY_ALWAYS_CAMERA_DIALOG -> putInt(KEY_ALWAYS_CAMERA_DIALOG, 
-                if(newValue as Boolean) 1 else 0)
             else -> false
         }
-
-    private fun putInt(key: String, value: Any): Boolean =
-        Settings.System.putInt(context?.contentResolver, key, value as Int)
 
     private fun putString(key: String, value: Any): Boolean =
         Settings.System.putString(context?.contentResolver, key, value as String)
@@ -120,12 +113,9 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
 
         private const val KEY_VIBRATOR_PREFERENCE = "device_setting_vib_strength"
         private const val FILE_LEVEL = "/sys/devices/platform/soc/89c000.i2c/i2c-2/2-005a/leds/vibrator/level"
-        private const val DEFAULT = "2"
 
         private val HEAVY_CLICK_EFFECT = VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
     
-        private const val KEY_MUTE_MEDIA_WITH_SILENT = "config_mute_media"
         private const val KEY_CAMERA_CATEGORY = "camera";
-        const val KEY_ALWAYS_CAMERA_DIALOG = "device_setting_always_on_camera_dialog";
     }
 }
