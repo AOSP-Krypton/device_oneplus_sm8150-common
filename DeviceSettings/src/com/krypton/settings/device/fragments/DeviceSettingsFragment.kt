@@ -21,21 +21,14 @@ import android.os.Bundle
 import android.os.SystemProperties
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.provider.Settings
-import android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_BOTTOM
-import android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_MIDDLE
-import android.provider.Settings.System.ALERTSLIDER_MODE_POSITION_TOP
 
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.PreferenceFragmentCompat
 
 import com.android.internal.R
 import com.android.internal.util.krypton.FileUtils
 import com.krypton.settings.preference.CustomSeekBarPreference
 
-class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeListener {
+class DeviceSettingsFragment: PreferenceFragmentCompat() {
 
     private lateinit var vibrator: Vibrator
 
@@ -46,35 +39,6 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
 
     override fun onCreatePreferences(bundle: Bundle?, key: String?) {
         setPreferencesFromResource(com.krypton.settings.device.R.xml.device_settings, key)
-
-        val entryValues = arrayOf(
-            getString(R.string.alert_slider_mode_normal).toString(),
-            getString(R.string.alert_slider_mode_priority).toString(),
-            getString(R.string.alert_slider_mode_vibrate).toString(),
-            getString(R.string.alert_slider_mode_silent).toString(),
-            getString(R.string.alert_slider_mode_dnd).toString()
-        )
-
-        findPreference<ListPreference>(KEY_ALERT_SLIDER_BOTTOM)?.also {
-            it.setEntryValues(entryValues)
-            val value = Settings.System.getString(context?.contentResolver, ALERTSLIDER_MODE_POSITION_BOTTOM)
-            it.value = value ?: entryValues[0]
-            it.setOnPreferenceChangeListener(this)
-        }
-
-        findPreference<ListPreference>(KEY_ALERT_SLIDER_MIDDLE)?.also {
-            it.setEntryValues(entryValues)
-            val value = Settings.System.getString(context?.contentResolver, ALERTSLIDER_MODE_POSITION_MIDDLE)
-            it.value = value ?: entryValues[2]
-            it.setOnPreferenceChangeListener(this)
-        }
-
-        findPreference<ListPreference>(KEY_ALERT_SLIDER_TOP)?.also {
-            it.setEntryValues(entryValues)
-            val value = Settings.System.getString(context?.contentResolver, ALERTSLIDER_MODE_POSITION_TOP)
-            it.value = value ?: entryValues[3]
-            it.setOnPreferenceChangeListener(this)
-        }
 
         val device: String = SystemProperties.get(PROP_KRYPTON_DEVICE, "")
         if (device == GUACAMOLEB)
@@ -90,22 +54,7 @@ class DeviceSettingsFragment: PreferenceFragmentCompat(), OnPreferenceChangeList
             }
     }
 
-    override fun onPreferenceChange(preference: Preference, newValue: Any): Boolean =
-        when (preference.key) {
-            KEY_ALERT_SLIDER_BOTTOM -> putString(ALERTSLIDER_MODE_POSITION_BOTTOM, newValue)
-            KEY_ALERT_SLIDER_MIDDLE -> putString(ALERTSLIDER_MODE_POSITION_MIDDLE, newValue)
-            KEY_ALERT_SLIDER_TOP -> putString(ALERTSLIDER_MODE_POSITION_TOP, newValue)
-            else -> false
-        }
-
-    private fun putString(key: String, value: Any): Boolean =
-        Settings.System.putString(context?.contentResolver, key, value as String)
-
     companion object {
-        private const val KEY_ALERT_SLIDER_BOTTOM = "alert_slider_bottom_preference"
-        private const val KEY_ALERT_SLIDER_MIDDLE = "alert_slider_middle_preference"
-        private const val KEY_ALERT_SLIDER_TOP = "alert_slider_top_preference"
-
         private const val KEY_VIBRATOR_CATEGORY = "vibrator"
         private const val PROP_KRYPTON_DEVICE = "ro.krypton.build.device"
         private const val GUACAMOLEB = "guacamoleb"
