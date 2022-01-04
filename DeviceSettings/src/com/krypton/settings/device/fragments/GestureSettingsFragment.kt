@@ -20,12 +20,8 @@ package com.krypton.settings.device.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.provider.Settings
-import android.provider.Settings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK
 
 import androidx.annotation.Keep
-import androidx.preference.ListPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 
 import com.android.internal.lineage.hardware.LineageHardwareManager
@@ -34,6 +30,7 @@ import com.android.internal.lineage.hardware.TouchscreenGesture
 
 import com.krypton.settings.device.R
 import com.krypton.settings.device.Utils
+import com.krypton.settings.preference.SystemSettingListPreference
 
 @Keep
 class GestureSettingsFragment: PreferenceFragmentCompat() {
@@ -49,17 +46,16 @@ class GestureSettingsFragment: PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.touchscreen_gesture_settings, rootKey)
         if (hardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
             hardwareManager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
-                val listPreference = ListPreference(context).apply {
+                val listPreference = SystemSettingListPreference(requireContext()).apply {
                     key = Utils.getResName(gesture.name)
                     summary = "%s"
                     setEntries(R.array.touchscreen_gesture_action_entries)
                     setEntryValues(R.array.touchscreen_gesture_action_values)
                     setDialogTitle(R.string.touchscreen_gesture_action_dialog_title)
+                    setDefaultValue("0")
                     setOnPreferenceChangeListener { _, newValue ->
                         val action = (newValue as String).toInt()
-                        if (hardwareManager.setTouchscreenGestureEnabled(gesture, action > 0))
-                            Settings.System.putInt(context?.contentResolver, key, action)
-                        else false
+                        hardwareManager.setTouchscreenGestureEnabled(gesture, action > 0)
                     }
                 }
                 requireContext().let {
