@@ -20,15 +20,15 @@
         android:title="@string/category_alert_slider">
 
         <com.krypton.settings.preference.SystemSettingListPreference
-            android:key="alert_slider_top_preference"
+            android:key="alertslider_mode_position_top"
             android:title="@string/alert_slider_top_title"
             android:summary="%s"
             android:entries="@array/alert_slider_modes"
             android:entryValues="@array/alert_slider_mode_values"
-            android:defaultValue="@*android:string/alert_slider_mode_normal" />
+            android:defaultValue="@*android:string/alert_slider_mode_silent" />
 
         <com.krypton.settings.preference.SystemSettingListPreference
-            android:key="alert_slider_middle_preference"
+            android:key="alertslider_mode_position_middle"
             android:title="@string/alert_slider_middle_title"
             android:summary="%s"
             android:entries="@array/alert_slider_modes"
@@ -36,19 +36,19 @@
             android:defaultValue="@*android:string/alert_slider_mode_vibrate" />
 
         <com.krypton.settings.preference.SystemSettingListPreference
-            android:key="alert_slider_bottom_preference"
+            android:key="alertslider_mode_position_bottom"
             android:title="@string/alert_slider_bottom_title"
             android:summary="%s"
             android:entries="@array/alert_slider_modes"
             android:entryValues="@array/alert_slider_mode_values"
-            android:defaultValue="@*android:string/alert_slider_mode_silent" />
+            android:defaultValue="@*android:string/alert_slider_mode_normal" />
 
         <com.krypton.settings.preference.SystemSettingSwitchPreference
             android:key="config_mute_media"
             android:title="@string/alert_slider_mute_media_title"
             android:summary="@string/alert_slider_mute_media_summary"
             android:defaultValue="0" />
-     
+
     </PreferenceCategory>
 
     <PreferenceCategory
