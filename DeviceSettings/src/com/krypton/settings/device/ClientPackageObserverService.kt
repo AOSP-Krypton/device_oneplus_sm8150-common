@@ -76,7 +76,10 @@ class ClientPackageObserverService: Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    override fun onDestroy() { unregisterClientObserver() }
+    override fun onDestroy() {
+        unregisterReceiver(broadcastReceiver)
+        unregisterClientObserver()
+    }
 
     private fun registerClientObserver() {
         isOpCameraInstalledAndActive = KryptonUtils.isPackageInstalled(this,
