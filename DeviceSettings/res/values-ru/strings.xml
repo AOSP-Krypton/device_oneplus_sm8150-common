@@ -24,7 +24,7 @@
 
     <!-- Screen off Gestures : Input -->
     <string name="touchscreen_gesture_settings_title">Жесты сенсорного экрана</string>
-    <string name="touchscreen_gesture_settings_summary">Выполняйте различные жесты на сенсорном экп для быстрых действий</string>
+    <string name="touchscreen_gesture_settings_summary">Выполняйте различные жесты на сенсорном экране для быстрых действий</string>
     <string name="touchscreen_gesture_haptic_feedback_title">Тактильная обратная связь</string>
     <string name="touchscreen_gesture_haptic_feedback_summary">Вибрация при обнаружении жеста сенсорного экрана</string>
     <string name="touchscreen_gesture_single_tap_title">Один тап</string>
