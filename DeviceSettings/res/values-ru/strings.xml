@@ -23,10 +23,10 @@
     <string name="gesture_title">Жесты</string>
 
     <!-- Screen off Gestures : Input -->
-    <string name="touchscreen_gesture_settings_title">Жесты на тачскрине</string>
-    <string name="touchscreen_gesture_settings_summary">Выполняйте различные жесты на тачскрине для быстрых действий</string>
+    <string name="touchscreen_gesture_settings_title">Жесты сенсорного экрана</string>
+    <string name="touchscreen_gesture_settings_summary">Выполняйте различные жесты на сенсорном экп для быстрых действий</string>
     <string name="touchscreen_gesture_haptic_feedback_title">Тактильная обратная связь</string>
-    <string name="touchscreen_gesture_haptic_feedback_summary">Вибрация при обнаружении жеста тачскрина</string>
+    <string name="touchscreen_gesture_haptic_feedback_summary">Вибрация при обнаружении жеста сенсорного экрана</string>
     <string name="touchscreen_gesture_single_tap_title">Один тап</string>
     <string name="touchscreen_gesture_two_fingers_down_swipe_title">Проведите двумя пальцами вниз</string>
     <string name="touchscreen_gesture_up_arrow_title">Нарисуйте a \"Λ\"</string>
@@ -44,7 +44,7 @@
     <string name="touchscreen_gesture_action_flashlight">Переключить фонарик</string>
     <string name="touchscreen_gesture_action_camera">Открыть камеру</string>
     <string name="touchscreen_gesture_action_browser">Открыть браузер</string>
-    <string name="touchscreen_gesture_action_dialer">Открыть звонилку</string>
+    <string name="touchscreen_gesture_action_dialer">Открыть номеронабиратель</string>
     <string name="touchscreen_gesture_action_email">Просмотреть почту</string>
     <string name="touchscreen_gesture_action_messages">Просмотреть ваши сообщения</string>
     <string name="touchscreen_gesture_action_play_pause_music">Воспроизведение/пауза музыки</string>
@@ -61,16 +61,16 @@
     <string name="vibration_warning">Установка слишком высокой силы может привести к необратимому повреждению оборудования</string>
 
     <!-- AlertSlider -->
-    <string name="category_alert_slider">Ползунок</string>
+    <string name="category_alert_slider">Alert Slider</string>
     <string name="alert_slider_bottom_title">Нижнее положение</string>
     <string name="alert_slider_middle_title">Среднее положение</string>
     <string name="alert_slider_top_title">Верхнее положение</string>
     <string name="mode_normal">Со звуком</string>
     <string name="mode_priority">Приоритет</string>
-    <string name="mode_vibrate">Вибро</string>
+    <string name="mode_vibrate">Вибрация</string>
     <string name="mode_silent">Тихо</string>
     <string name="mode_dnd">Без звука</string>
-    <string name="alert_slider_mute_media_title">Выключить медиа</string>
+    <string name="alert_slider_mute_media_title">Выключить звук медиафайлов</string>
     <string name="alert_slider_mute_media_summary">Отключение звука при переключении на беззвучный режим</string>
 
     <!-- Pop-up camera-->
