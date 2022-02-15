@@ -177,6 +177,11 @@
     <carrier_config gid1="f2330002" mcc="208" mnc="15">
         <string-array name="read_only_apn_types_string_array" num="0" />
     </carrier_config>
+    <carrier_config mcc="208" mnc="15">
+        <boolean name="carrier_volte_available_bool" value="true" />
+        <boolean name="vendor_hide_volte_settng_ui" value="true" />
+        <string name="carrier_name_string">Free</string>
+    </carrier_config>
     <carrier_config mcc="208" mnc="20">
         <boolean name="carrier_volte_available_bool" value="true" />
         <boolean name="vendor_hide_volte_settng_ui" value="true" />
