@@ -21,11 +21,11 @@ import android.view.MenuItem
 
 import androidx.fragment.app.commit
 
-import com.krypton.settings.device.fragments.DeviceSettingsFragment
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 import com.android.settingslib.collapsingtoolbar.R
+import com.krypton.settings.device.fragments.DeviceSettingsFragment
 
-class DeviceSettingsActivity: CollapsingToolbarBaseActivity() {
+class DeviceSettingsActivity : CollapsingToolbarBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

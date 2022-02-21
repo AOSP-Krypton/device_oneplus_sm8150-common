@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 The CyanogenMod project
- *               2017 The LineageOS Project
- *               2021 AOSP-Krypton Project
+ * Copyright (C) 2017 The LineageOS Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.krypton.settings.device.Utils
 import com.krypton.settings.preference.SystemSettingListPreference
 
 @Keep
-class GestureSettingsFragment: PreferenceFragmentCompat() {
+class GestureSettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var hardwareManager: LineageHardwareManager
 
@@ -44,26 +44,25 @@ class GestureSettingsFragment: PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.touchscreen_gesture_settings, rootKey)
-        if (hardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
-            hardwareManager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
-                val listPreference = SystemSettingListPreference(requireContext()).apply {
-                    key = Utils.getResName(gesture.name)
-                    summary = "%s"
-                    setEntries(R.array.touchscreen_gesture_action_entries)
-                    setEntryValues(R.array.touchscreen_gesture_action_values)
-                    setDialogTitle(R.string.touchscreen_gesture_action_dialog_title)
-                    setDefaultValue("0")
-                    setOnPreferenceChangeListener { _, newValue ->
-                        val action = (newValue as String).toInt()
-                        hardwareManager.setTouchscreenGestureEnabled(gesture, action > 0)
-                    }
+        if (!hardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) return
+        hardwareManager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
+            val listPreference = SystemSettingListPreference(requireContext()).apply {
+                key = Utils.getResName(gesture.name)
+                summary = "%s"
+                setEntries(R.array.touchscreen_gesture_action_entries)
+                setEntryValues(R.array.touchscreen_gesture_action_values)
+                setDialogTitle(R.string.touchscreen_gesture_action_dialog_title)
+                setDefaultValue("0")
+                setOnPreferenceChangeListener { _, newValue ->
+                    val action = (newValue as String).toInt()
+                    hardwareManager.setTouchscreenGestureEnabled(gesture, action > 0)
                 }
-                requireContext().let {
-                    val resId = it.resources.getIdentifier(listPreference.key, "string", it.packageName)
-                    listPreference.title = if (resId != 0) getString(resId) else gesture.name
-                }
-                preferenceScreen.addPreference(listPreference)
             }
+            with (requireContext()) {
+                val resId = resources.getIdentifier(listPreference.key, "string", this.packageName)
+                listPreference.title = if (resId != 0) getString(resId) else gesture.name
+            }
+            preferenceScreen.addPreference(listPreference)
         }
     }
 }

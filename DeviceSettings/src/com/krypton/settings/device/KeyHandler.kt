@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2016 The CyanogenMod project
- *               2017-2018 The LineageOS Project
- *               2021 AOSP-Krypton Project
+ * Copyright (C) 2017-2018 The LineageOS Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ import com.android.internal.R
 import com.android.internal.util.krypton.KryptonUtils
 
 @Keep
-class KeyHandler(private val context: Context): DeviceKeyHandler {
+class KeyHandler(private val context: Context) : DeviceKeyHandler {
     // Supported modes for AlertSlider positions.
     private val MODE_NORMAL = context.getString(R.string.alert_slider_mode_normal)
     private val MODE_PRIORITY = context.getString(R.string.alert_slider_mode_priority)
@@ -76,15 +76,15 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
     private val powerManager = context.getSystemService(PowerManager::class.java)
     private val handler = EventHandler()
     private val vibrator = context.getSystemService(Vibrator::class.java)
-    private val packageManager = context.getSystemService(PackageManager::class.java)
+    private val packageManager = context.packageManager
     private val settingMap = SparseArray<String>()
     private var keyguardManager: KeyguardManager? = null
 
     private var wasMuted = false
     private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val stream = intent.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_TYPE, -1)
-            val state = intent.getBooleanExtra(AudioManager.EXTRA_STREAM_VOLUME_MUTED, false)
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val stream = intent?.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_TYPE, -1)
+            val state = intent?.getBooleanExtra(AudioManager.EXTRA_STREAM_VOLUME_MUTED, false)
             if (stream == AudioSystem.STREAM_MUSIC && state == false) {
                 wasMuted = false
             }
@@ -95,7 +95,7 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
         val manager = LineageHardwareManager.getInstance(context)
         if (manager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
             manager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
-                settingMap.put(gesture.keycode, Utils.Companion.getResName(gesture.name))
+                settingMap[gesture.keycode] = Utils.getResName(gesture.name)
             }
         }
         context.registerReceiver(
@@ -126,10 +126,8 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
             return false
         }
 
-        val key: String? = settingMap.get(event.scanCode)
-        if (key == null) {
-            return false
-        } else if (key == Utils.getResName(SINGLE_TAP_GESTURE)) {
+        val key: String = settingMap[event.scanCode] ?: return false
+        if (key == Utils.getResName(SINGLE_TAP_GESTURE)) {
             if (getKeyguardManagerService()?.isDeviceLocked() == false) {
                 // Wakeup the device if not locked
                 wakeUp()
@@ -211,7 +209,7 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
 
     private fun launchMessages() {
         startActivitySafely(getLaunchableIntent(
-                Intent(Intent.ACTION_VIEW, Uri.parse("sms:"))))
+            Intent(Intent.ACTION_VIEW, Uri.parse("sms:"))))
     }
 
     private fun toggleFlashlight() {
@@ -251,8 +249,7 @@ class KeyHandler(private val context: Context): DeviceKeyHandler {
     }
 
     private fun dispatchMediaKeyToMediaSession(keycode: Int) {
-        val helper: MediaSessionLegacyHelper? = MediaSessionLegacyHelper.getHelper(context)
-        if (helper == null) {
+        val helper = MediaSessionLegacyHelper.getHelper(context) ?: run {
             Log.w(TAG, "Unable to send media key event")
             return
         }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 The OmniROM Project
- *               2021 AOSP-Krypton Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,22 +31,26 @@ import com.android.internal.lineage.hardware.TouchscreenGesture
 import com.android.internal.util.krypton.FileUtils
 
 @Keep
-class BootCompletedReceiver: BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent?) {
-        when (intent?.action) {
-            Intent.ACTION_LOCKED_BOOT_COMPLETED -> {
-                restoreVibrationStrengthPreference(context)
-                val hardwareManager = LineageHardwareManager.getInstance(context)
-                if (hardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) {
-                    hardwareManager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
-                        val actionForGesture = Settings.System.getInt(context.contentResolver,
-                            Utils.getResName(gesture.name), 0)
-                        hardwareManager.setTouchscreenGestureEnabled(gesture, actionForGesture > 0)
-                    }
-                }
+class BootCompletedReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (context == null || intent == null) return
+        if (intent.action == Intent.ACTION_LOCKED_BOOT_COMPLETED) {
+            restoreVibrationStrengthPreference(context)
+            val hardwareManager = LineageHardwareManager.getInstance(context)
+            if (!hardwareManager.isSupported(FEATURE_TOUCHSCREEN_GESTURES)) return
+            hardwareManager.touchscreenGestures.forEach { gesture: TouchscreenGesture ->
+                val actionForGesture = Settings.System.getInt(context.contentResolver,
+                    Utils.getResName(gesture.name), 0)
+                hardwareManager.setTouchscreenGestureEnabled(gesture, actionForGesture > 0)
             }
-            Intent.ACTION_BOOT_COMPLETED -> context.startServiceAsUser(Intent(context,
-                ClientPackageObserverService::class.java), UserHandle.SYSTEM)
+        } else if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            context.startServiceAsUser(
+                Intent(
+                    context,
+                    ClientPackageObserverService::class.java
+                ),
+                UserHandle.SYSTEM
+            )
         }
     }
 

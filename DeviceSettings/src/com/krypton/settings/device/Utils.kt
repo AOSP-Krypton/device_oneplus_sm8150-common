@@ -16,10 +16,6 @@
 
 package com.krypton.settings.device
 
-class Utils {
-    companion object {
-        private const val TOUCHSCREEN_GESTURE_FORMAT = ""
-
-        fun getResName(name: String) = "touchscreen_gesture_${name.toLowerCase().replace(" ", "_")}_title"
-    }
+object Utils {
+    fun getResName(name: String) = "touchscreen_gesture_${name.toLowerCase().replace(" ", "_")}_title"
 }

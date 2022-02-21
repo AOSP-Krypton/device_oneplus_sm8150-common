@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2021 AOSP-Krypton Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.io.File
 
 import vendor.oneplus.hardware.camera.V1_0.IOnePlusCameraProvider
 
-class ClientPackageObserverService: Service() {
+class ClientPackageObserverService : Service() {
 
     private var isOpCameraInstalledAndActive = false
     private var clientObserverRegistered = false
@@ -55,7 +55,10 @@ class ClientPackageObserverService: Service() {
         }
     }
 
+    private var receiverRegistered = false
+
     override fun onCreate() {
+        super.onCreate()
         logD("onCreate")
         isOpCameraInstalledAndActive = KryptonUtils.isPackageInstalled(this,
             CLIENT_PACKAGE_NAME, false /** ignore state */)
@@ -64,20 +67,22 @@ class ClientPackageObserverService: Service() {
             setPackageName(CLIENT_PACKAGE_PATH)
         } else {
             stopSelf()
+            return
         }
         registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(ACTION_SCREEN_OFF)
             addAction(ACTION_SCREEN_ON)
         })
         registerClientObserver()
+        receiverRegistered = true
     }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        unregisterReceiver(broadcastReceiver)
+        if (receiverRegistered) {
+            unregisterReceiver(broadcastReceiver)
+        }
         unregisterClientObserver()
     }
 
@@ -105,7 +110,7 @@ class ClientPackageObserverService: Service() {
             logD("client_package $file and pkg = $pkgName")
             IOnePlusCameraProvider.getService()?.setPackageName(pkgName)
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error communicating with IOnePlusCameraProvider", e)
+            Log.e(TAG, "Error communicating with IOnePlusCameraProvider")
         }
     }
 

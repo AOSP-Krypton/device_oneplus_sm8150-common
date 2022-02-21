@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 AOSP-Krypton Project
+ * Copyright (C) 2021-2022 AOSP-Krypton Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.android.internal.R
 import com.android.internal.util.krypton.FileUtils
 import com.krypton.settings.preference.CustomSeekBarPreference
 
-class DeviceSettingsFragment: PreferenceFragmentCompat() {
+class DeviceSettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var vibrator: Vibrator
 
@@ -40,16 +40,19 @@ class DeviceSettingsFragment: PreferenceFragmentCompat() {
     override fun onCreatePreferences(bundle: Bundle?, key: String?) {
         setPreferencesFromResource(com.krypton.settings.device.R.xml.device_settings, key)
 
-        val device: String = SystemProperties.get(PROP_KRYPTON_DEVICE, "")
-        if (device == GUACAMOLEB)
+        val device: String = SystemProperties.get(PROP_KRYPTON_DEVICE, null)
+        if (device == GUACAMOLEB) {
             preferenceScreen.removePreferenceRecursively(KEY_VIBRATOR_CATEGORY)
-        if(device == GUACAMOLEB || device == HOTDOGB)
+        }
+        if (device == GUACAMOLEB || device == HOTDOGB) {
             preferenceScreen.removePreferenceRecursively(KEY_CAMERA_CATEGORY)
+        }
 
         findPreference<CustomSeekBarPreference>(KEY_VIBRATOR_PREFERENCE)
             ?.setOnPreferenceChangeListener { _, newValue ->
-                if (vibrator.hasVibrator())
+                if (vibrator.hasVibrator()) {
                     vibrator.vibrate(HEAVY_CLICK_EFFECT)
+                }
                 FileUtils.writeLine(FILE_LEVEL, (newValue as Int).toString())
             }
     }
