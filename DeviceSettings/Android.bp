@@ -12,7 +12,7 @@ android_app {
         "androidx.preference_preference",
         "androidx.fragment_fragment-ktx",
         "vendor.oneplus.hardware.camera-V1.0-java",
-        "PreferenceExtensions",
+        "vendor_support",
     ],
     required: [
         "privapp_whitelist_com.krypton.settings.device",
