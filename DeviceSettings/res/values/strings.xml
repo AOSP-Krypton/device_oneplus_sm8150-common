@@ -17,6 +17,7 @@
 
     <!-- App Title -->
     <string name="device_settings_title">OnePlus Settings</string>
+    <string name="device_settings_summary">Alert slider, gestures</string>
 
     <string name="display_title">Display</string>
 
