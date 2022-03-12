@@ -1,22 +1,28 @@
+# Authsecret
+PRODUCT_PACKAGES += \
+    android.hardware.authsecret@1.0.vendor
+
 # Bluetooth
 PRODUCT_PACKAGES += \
-    android.hardware.bluetooth.a2dp@1.0.vendor \
-    android.hardware.bluetooth@1.0.vendor \
-    android.hardware.bluetooth@1.1.vendor
+    android.hardware.bluetooth@1.0.vendor 
 
 # DRM
 PRODUCT_PACKAGES += \
 	android.hardware.drm@1.4.vendor
 
+# Gatekeeper
+PRODUCT_PACKAGES += \
+    android.hardware.gatekeeper@1.0.vendor
+
+# GPS
+PRODUCT_PACKAGES += \
+	android.hardware.gnss.measurement_corrections@1.1.vendor \
+    android.hardware.gnss.visibility_control@1.0.vendor \
+    android.hardware.gnss@2.1.vendor
+
 # Keymaster
 PRODUCT_PACKAGES += \
-	android.hardware.gatekeeper@1.0.vendor \
     android.hardware.keymaster@4.1.vendor
-
-# Location
-PRODUCT_PACKAGES += \
-	android.hardware.gnss@1.0.vendor \
-	android.hardware.gnss@2.1.vendor
 
 # Net
 PRODUCT_PACKAGES += \
@@ -35,19 +41,10 @@ PRODUCT_PACKAGES += \
 	android.hardware.radio@1.5.vendor \
     android.hardware.radio.config@1.2.vendor \
     android.hardware.radio.deprecated@1.0.vendor \
-
-# Secure Element
-PRODUCT_PACKAGES += \
-	android.hardware.secure_element@1.1.vendor \
 	android.hardware.secure_element@1.2.vendor
 
 # Sensor
 PRODUCT_PACKAGES += \
-	android.hardware.audio@4.0.vendor:64 \
-	android.frameworks.sensorservice@1.0.vendor
-
-# Wifi
-PRODUCT_PACKAGES += \
-	android.hardware.wifi@1.5.vendor
+	android.hardware.audio@4.0.vendor:64
 	
 	
