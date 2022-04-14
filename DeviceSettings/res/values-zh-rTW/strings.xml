@@ -17,7 +17,7 @@
 
     <!-- App Title -->
     <string name="device_settings_title">一加設定</string>
-    <string name="device_settings_summary">三段式開關,手勢</string>
+    <string name="device_settings_summary">三段式開關、息屏手勢</string>
 
     <string name="display_title">顯示</string>
 
