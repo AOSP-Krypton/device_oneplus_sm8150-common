@@ -48,8 +48,6 @@ static const std::string rgbw_max_lux_paths[4] = {
     PERSIST_ENG "white_max_lux",
 };
 
-bool DEBUG = false;
-
 struct als_config {
     bool hbr;
     float rgbw_max_lux[4];
@@ -144,10 +142,9 @@ void AlsCorrection::init() {
             conf.rgbw_lux_postmul[i] = rgbw_acc / conf.rgbw_max_lux_div[i];
         }
     }
-    if(DEBUG)
-        ALOGI("Display maximums: R=%.0f G=%.0f B=%.0f W=%.0f",
-            conf.rgbw_max_lux[0], conf.rgbw_max_lux[1],
-            conf.rgbw_max_lux[2], conf.rgbw_max_lux[3]);
+    ALOGI("Display maximums: R=%.0f G=%.0f B=%.0f W=%.0f",
+        conf.rgbw_max_lux[0], conf.rgbw_max_lux[1],
+        conf.rgbw_max_lux[2], conf.rgbw_max_lux[3]);
 
     float row_coe = get(PERSIST_ENG "row_coe", 0.0);
     if (row_coe != 0.0) {
@@ -157,11 +154,11 @@ void AlsCorrection::init() {
 
     float cali_coe = get(PERSIST_ENG "cali_coe", 0.0);
     conf.calib_gain = cali_coe > 0.0 ? cali_coe / 1000.0 : 1.0;
-    if(DEBUG) ALOGI("Calibrated sensor gain: %.2fx", 1.0 / (conf.calib_gain * conf.sensor_inverse_gain[0]));
+    ALOGI("Calibrated sensor gain: %.2fx", 1.0 / (conf.calib_gain * conf.sensor_inverse_gain[0]));
 
     float als_bias = get(PERSIST_ENG "als_bias", 0.0);
     conf.bias = als_bias <= 4.0 ? als_bias : 0.0;
-    if(DEBUG) ALOGI("Sensor bias: %.2f", conf.bias);
+    ALOGI("Sensor bias: %.2f", conf.bias);
 
     float max_brightness = get(SYSFS_BACKLIGHT "max_brightness", 0.0);
     conf.max_brightness = max_brightness > 0.0 ? max_brightness : 1023.0;
@@ -194,7 +191,7 @@ void AlsCorrection::process(Event& event) {
             event.u.data[15]
          );
     */
-    if(DEBUG) ALOGV("Raw sensor reading: %.0f", event.u.scalar);
+    ALOGV("Raw sensor reading: %.0f", event.u.scalar);
 
     if (conf.rgbw_max_lux[0] == 0.0 && conf.rgbw_max_lux[1] == 0.0 &&
         conf.rgbw_max_lux[2] == 0.0 && conf.rgbw_max_lux[3] == 0.0) {
@@ -211,7 +208,7 @@ void AlsCorrection::process(Event& event) {
     if (conf.hbr && event.u.data[8] != 2.0) {
         state.force_update = true;
         event.u.scalar *= conf.calib_gain * conf.sensor_inverse_gain[0];
-        if(DEBUG)   ALOGV("Skipping correction, calibrated ambient light: %.0f lux", event.u.scalar);
+        ALOGV("Skipping correction, calibrated ambient light: %.0f lux", event.u.scalar);
         return;
     }
 
@@ -223,12 +220,12 @@ void AlsCorrection::process(Event& event) {
         state.last_forced_update = now;
     } else {
         if (brightness > 0.0 && (now - state.last_forced_update) > s2ns(3)) {
-            if(DEBUG)   ALOGV("Forcing screenshot");
+            ALOGV("Forcing screenshot");
             state.last_forced_update = now;
             state.force_update = true;
         }
         if ((now - state.last_update) < ms2ns(100)) {
-            if(DEBUG)   ALOGV("Events coming too fast, dropping");
+            ALOGV("Events coming too fast, dropping");
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
@@ -243,7 +240,7 @@ void AlsCorrection::process(Event& event) {
                     || sensor_raw_calibrated < 10.0 || sensor_raw_calibrated > (5.0 / .07)))) {
         android::base::unique_fd fd(socket(PF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0));
         if (fd.get() < 0) {
-            if(DEBUG)   ALOGV("Failed to open als correction socket: %s", strerror(errno));
+            ALOGV("Failed to open als correction socket: %s", strerror(errno));
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
@@ -251,7 +248,7 @@ void AlsCorrection::process(Event& event) {
 
         sockaddr_un addr{ AF_UNIX, "/dev/socket/als_correction" };
         if (connect(fd.get(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1) {
-            if(DEBUG)    ALOGV("Failed to connect to als correction socket: %s", strerror(errno));
+            ALOGV("Failed to connect to als correction socket: %s", strerror(errno));
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
@@ -259,7 +256,7 @@ void AlsCorrection::process(Event& event) {
 
         const char *cmd = "take_screenshot";
         if (send(fd.get(), cmd, strlen(cmd) + 1, 0) == -1) {
-            if(DEBUG)   ALOGV("Failed to send command to als correction socket: %s", strerror(errno));
+            ALOGV("Failed to send command to als correction socket: %s", strerror(errno));
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
@@ -267,7 +264,7 @@ void AlsCorrection::process(Event& event) {
 
         pollfd fds{ fd.get(), POLLIN, 0 };
         if (poll(&fds, 1, -1) != 1) {
-            if(DEBUG)   ALOGV("Invalid poll als correction socket fd");
+            ALOGV("Invalid poll als correction socket fd");
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
@@ -279,19 +276,19 @@ void AlsCorrection::process(Event& event) {
         } screenshot;
 
         if (read(fd.get(), &screenshot, sizeof(screenshot_t)) != sizeof(screenshot_t)) {
-            if(DEBUG)   ALOGV("Invalid reply from als correction socket");
+            ALOGV("Invalid reply from als correction socket");
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
         }
 
         if ((now - screenshot.timestamp) > ms2ns(1000)) {
-            if(DEBUG) ALOGV("Screenshot too old, dropping event");
+            ALOGV("Screenshot too old, dropping event");
             // TODO figure out a better way to drop events
             event.sensorHandle = 0;
             return;
         }
-        if(DEBUG)   ALOGV("Screen color above sensor: %d %d %d", screenshot.r, screenshot.g, screenshot.b);
+        ALOGV("Screen color above sensor: %d %d %d", screenshot.r, screenshot.g, screenshot.b);
 
         float rgbw[4] = {
             static_cast<float>(screenshot.r), static_cast<float>(screenshot.g), static_cast<float>(screenshot.b),
@@ -318,7 +315,7 @@ void AlsCorrection::process(Event& event) {
         float brightness_grayscale_gamma = std::pow(rgbw[3] / 255.0, 2.2) * brightness_fullwhite;
         cumulative_correction = std::min(cumulative_correction, brightness_fullwhite);
         cumulative_correction = std::max(cumulative_correction, brightness_grayscale_gamma);
-        if(DEBUG)   ALOGV("Estimated screen brightness: %.0f", cumulative_correction);
+        ALOGV("Estimated screen brightness: %.0f", cumulative_correction);
 
         float sensor_raw_corrected = std::max(event.u.scalar - cumulative_correction, 0.0f);
 
@@ -348,7 +345,7 @@ void AlsCorrection::process(Event& event) {
                 }
             }
         }
-        if(DEBUG) ALOGV("AGC gain: %f", agc_gain);
+        ALOGV("AGC gain: %f", agc_gain);
 
         if (cumulative_correction <= event.u.scalar * 1.35
                 || event.u.scalar * conf.calib_gain * agc_gain < 10000.0
@@ -365,16 +362,16 @@ void AlsCorrection::process(Event& event) {
             sensor_corrected = std::max(sensor_corrected - 14.0, 0.0);
             event.u.scalar = sensor_corrected;
             state.last_corrected_value = sensor_corrected;
-            if(DEBUG) ALOGV("Fully corrected sensor value: %.0f lux", sensor_corrected);
+            ALOGV("Fully corrected sensor value: %.0f lux", sensor_corrected);
         } else {
             event.u.scalar = state.last_corrected_value;
-            if(DEBUG) ALOGV("Reusing cached value: %.0f lux", event.u.scalar);
+            ALOGV("Reusing cached value: %.0f lux", event.u.scalar);
         }
 
         state.force_update = false;
     } else {
         event.u.scalar = state.last_corrected_value;
-        if(DEBUG) ALOGV("Reusing cached value: %.0f lux", event.u.scalar);
+        ALOGV("Reusing cached value: %.0f lux", event.u.scalar);
     }
 }
 
