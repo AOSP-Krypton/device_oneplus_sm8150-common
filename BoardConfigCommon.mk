@@ -80,7 +80,7 @@ TARGET_SURFACEFLINGER_UDFPS_LIB := //hardware/oplus:libudfps_extension.oplus
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     $(COMMON_PATH)/device_framework_matrix.xml \
     hardware/qcom-caf/common/vendor_framework_compatibility_matrix.xml \
-    vendor/lineage/config/device_framework_matrix.xml
+    vendor/kosp/config/device_framework_matrix.xml
 DEVICE_MATRIX_FILE := $(COMMON_PATH)/compatibility_matrix.xml
 DEVICE_MANIFEST_FILE := $(COMMON_PATH)/manifest.xml
 
@@ -106,6 +106,11 @@ BOARD_RAMDISK_USE_LZ4 := true
 TARGET_KERNEL_ADDITIONAL_FLAGS := BRAND_SHOW_FLAG=oneplus TARGET_PRODUCT=msmnile
 TARGET_KERNEL_CONFIG := vendor/sm8150-perf_defconfig
 TARGET_KERNEL_SOURCE := kernel/oneplus/sm8150
+TARGET_KERNEL_CLANG_COMPILE := true
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-gnu-
+TARGET_KERNEL_CROSS_COMPILE_ARM32_PREFIX := arm-linux-gnueabi-
+TARGET_KERNEL_CLANG_VERSION := clang-krypton
+TARGET_KERNEL_ADDITIONAL_FLAGS += LLVM=1 AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip LD=ld.lld
 
 # Platform
 BOARD_USES_QCOM_HARDWARE := true
@@ -152,11 +157,6 @@ include $(COMMON_PATH)/sepolicy/SEPolicy.mk
 SOONG_CONFIG_NAMESPACES += OPLUS_LINEAGE_TOUCH_HAL
 SOONG_CONFIG_OPLUS_LINEAGE_TOUCH_HAL := INCLUDE_DIR
 SOONG_CONFIG_OPLUS_LINEAGE_TOUCH_HAL_INCLUDE_DIR := $(COMMON_PATH)/touch/include
-
-# Trust
-TARGET_TRUST_USB_CONTROL_PATH := /sys/devices/platform/soc/a600000.ssusb/usb_data_enabled
-TARGET_TRUST_USB_CONTROL_ENABLE := 0
-TARGET_TRUST_USB_CONTROL_DISABLE := 1
 
 # Verified Boot
 BOARD_AVB_ENABLE := true

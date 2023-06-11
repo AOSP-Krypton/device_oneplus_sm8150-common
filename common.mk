@@ -20,9 +20,9 @@ PRODUCT_PACKAGES += \
     com.dsi.ant@1.0.vendor
 
 # Alert slider
-PRODUCT_PACKAGES += \
-    KeyHandler \
-    tri-state-key-calibrate
+# PRODUCT_PACKAGES += \
+#     KeyHandler \
+#     tri-state-key-calibrate
 
 # APEX
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
@@ -152,8 +152,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
 
 # Doze
-PRODUCT_PACKAGES += \
-    OplusDoze
+# PRODUCT_PACKAGES += \
+#     OplusDoze
 
 # DRM
 PRODUCT_PACKAGES += \
@@ -396,10 +396,6 @@ PRODUCT_COPY_FILES += \
 # Touch
 PRODUCT_PACKAGES += \
     vendor.lineage.touch@1.0-service.oplus
-
-# Trust HAL
-PRODUCT_PACKAGES += \
-    vendor.lineage.trust@1.0-service
 
 # Update engine
 PRODUCT_PACKAGES += \
